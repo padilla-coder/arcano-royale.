@@ -111,7 +111,7 @@ h2{font-family:var(--display);font-weight:400;margin:0;font-size:clamp(32px,10vw
 .modal p{margin:0;color:var(--mute);font-weight:700}
 .btn.danger{background:var(--bad);color:#2a0008;box-shadow:0 5px 0 #8a2030}
 .btn.danger:active{box-shadow:0 1px 0 #8a2030}
-@media (max-height:520px){.screen{padding-top:calc(var(--st,0px) + 8px);padding-bottom:calc(var(--sb,0px) + 8px)}.modal .panel{padding:14px;gap:8px}.modal h3{font-size:22px}}
+@media (max-height:520px){.tag{display:none}.screen{padding-top:calc(var(--st,0px) + 8px);padding-bottom:calc(var(--sb,0px) + 8px)}.modal .panel{padding:14px;gap:8px}.modal h3{font-size:22px}}
 @media (min-width:700px) and (min-height:560px){
   .btn{font-size:24px;padding:14px 28px}
   .btn.big{font-size:42px;padding:18px 72px}
@@ -144,6 +144,7 @@ input#nameIn.bad{border-color:var(--bad);animation:shake .4s}
     <span class="pill">🪙 <b id="coins">0</b></span>
     <span class="pill">🏆 Mejor puesto <b id="best">-</b></span>
     <span class="pill">👑 Victorias <b id="wins">0</b></span>
+    <span class="pill">🔥 Racha <b id="streak">0</b></span>
   </div>
   <input id="nameIn" maxlength="14" placeholder="Escribe tu nombre para jugar" autocomplete="off" aria-label="Tu nombre de mago" aria-describedby="nameErr" required>
   <p id="nameErr" class="err" role="alert" hidden>Escribe tu nombre para poder jugar.</p>
@@ -152,6 +153,7 @@ input#nameIn.bad{border-color:var(--bad);animation:shake .4s}
     <button class="btn sm" id="heroBtn">Héroes</button>
     <button class="btn sm" id="sndBtn">Sonido: sí</button>
     <button class="btn sm" id="autoBtn">Disparo auto: sí</button>
+    <button class="btn sm" id="diffBtn">Dificultad: Difícil</button>
   </div>
   <p class="how">Stick izquierdo para moverte, derecho para apuntar. Cambia de elemento, esquiva con el dash y lanza el meteoro cuando se cargue. En PC: WASD, ratón, teclas 1 2 3, Espacio y Q.</p>
 </section>
@@ -202,7 +204,7 @@ const safe={t:0,b:0,l:0,r:0};
 
 /* ---------- datos guardados ---------- */
 const SAVE_KEY='arcano_royale_v1';
-let save={coins:0,owned:[0],hero:0,best:0,name:'',sound:true,auto:true,games:0,wins:0};
+let save={coins:0,owned:[0],hero:0,best:0,name:'',sound:true,auto:true,games:0,wins:0,diff:1,streak:0};
 try{const s=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');if(s&&typeof s==='object')Object.assign(save,s);}catch(e){}
 function persist(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(save));}catch(e){}}
 
@@ -235,6 +237,21 @@ const NAMES=['MagoLoco','Merlín99','SofiFlame','ElBrujo','Gandalfito','LunaNegr
 const COLORS=['#ff7a2f','#4fd8ff','#c28bff','#6fe08a','#ff5b8a','#ffd24a','#5b8cff','#ff9b5b','#3fe0c0','#e07bff','#a0e04f','#ff6b6b'];
 const ZR=[1500,1050,700,430,250,120,40],WAIT=[15,14,12,10,8,6],SHR=[14,13,12,10,8,6],ZD=[2,4,7,11,16,22];
 const xpNeed=l=>3+l*2;
+/* Dificultad: cada punto de L multiplica la fuerza de los rivales de forma exponencial */
+const DIFFS=[{name:'Normal',l:.8,color:'#6fe08a'},{name:'Difícil',l:1.3,color:'#ffcf4a'},{name:'Extrema',l:2.7,color:'#ff9b5b'},{name:'Pesadilla',l:4.5,color:'#ff5b6e'}];
+function diffL(){const d=DIFFS[save.diff]||DIFFS[1];return Math.min(12,d.l+Math.min(8,save.streak||0)*.75);}
+function applyDifficulty(b){
+  const L=G.L,a=b.ai;
+  b.maxHp=Math.round(100*Math.pow(1.12,L));b.hp=b.maxHp;
+  b.dmgM=.9*Math.pow(1.12,L);b.rateM=Math.pow(1.08,L);b.spdM=Math.min(1.3,Math.pow(1.03,L));
+  b.xpM=1+.15*L;
+  a.skill=clamp(rand(.3,.8)+.06*L,.3,.98);
+  a.aggro=Math.min(720,rand(300,440)*(1+.08*L));
+  a.reactK=1/(1+.25*L);
+  a.hunt=Math.random()<Math.min(.6,.09*L);
+  a.dodgeT=0;
+  for(let i=0,n=Math.floor(L/1.5);i<n;i++){b.level++;botUpgrade(b);}
+}
 const rangeOf=w=>520*w.rangeM;
 
 /* ---------- audio y vibración ---------- */
@@ -374,10 +391,11 @@ function startMatch(){
   const used=new Set();
   const player=newWizard((save.name||'Mago').slice(0,14),hero.color,true);
   hero.apply(player);player.el=hero.el;G.P=player;G.ws.push(player);
+  G.L=diffL();
   const pool=NAMES.slice().sort(()=>Math.random()-.5);
   for(let i=0;i<19;i++){
     const b=newWizard(pool[i%pool.length],COLORS[i%COLORS.length],false);
-    b.ai.mode='wander';b.dmgM=.85;G.ws.push(b);
+    b.ai.mode='wander';applyDifficulty(b);G.ws.push(b);
   }
   G.ws.forEach(w=>{
     for(let k=0;k<60;k++){
@@ -394,7 +412,7 @@ function startMatch(){
   inp.moveId=null;inp.aimId=null;
   $('#levelup').hidden=true;
   showScreen(null);mode='play';layoutBtns();
-  banner('¡Que comience la batalla!');
+  banner('Dificultad '+DIFFS[save.diff].name+(save.streak?' · racha '+save.streak:''));
 }
 function randPoint(rad,avoid,cx,cy){
   for(let k=0;k<12;k++){
@@ -446,7 +464,7 @@ function fire(w,ang){
   const e=ELS[w.el],n=1+w.multi,spread=.16;
   for(let i=0;i<n;i++){
     const a=ang+(i-(n-1)/2)*spread,x=w.x+Math.cos(a)*(w.r+6),y=w.y+Math.sin(a)*(w.r+6);
-    G.ps.push({x,y,px:x,py:y,vx:Math.cos(a)*e.spd,vy:Math.sin(a)*e.spd,dmg:e.dmg*w.dmgM*(n>1?.82:1),owner:w,el:w.el,r:e.r,life:rangeOf(w)/e.spd,pierce:e.pierce+w.pierce,hit:null});
+    G.ps.push({x,y,px:x,py:y,vx:Math.cos(a)*e.spd,vy:Math.sin(a)*e.spd,dmg:e.dmg*w.dmgM*(n>1?.82:1)*(w.isPlayer?1:Math.pow(1.12,G.zone.phase)),owner:w,el:w.el,r:e.r,life:rangeOf(w)/e.spd,pierce:e.pierce+w.pierce,hit:null});
   }
   w.cd=e.cd/w.rateM;sfx('shoot',w);
 }
@@ -478,7 +496,7 @@ function kill(w){
   if(w.isPlayer){G.killer=killer;closeLevelUp();}
 }
 function addXp(w,n){
-  w.xp+=n;
+  w.xp+=n*(w.xpM||1);
   while(w.level<14&&w.xp>=xpNeed(w.level)){
     w.xp-=xpNeed(w.level);w.level++;w.maxHp+=4;w.hp=Math.min(w.maxHp,w.hp+w.maxHp*.15);
     if(w.isPlayer){G.pending++;sfx('level');}else botUpgrade(w);
@@ -569,9 +587,11 @@ function botThink(b){
   const a=b.ai,z=G.zone,gz=zoneGoal();
   let best=null,bd=1e9;
   for(const w of G.ws){if(w===b||!w.alive)continue;const d=dist(b,w);if(d<bd){bd=d;best=w;}}
-  const prev=a.tgt;
-  a.tgt=(best&&bd<a.aggro)?best:null;a.tgtD=bd;
-  if(a.tgt&&a.tgt!==prev)a.react=rand(.25,.65);
+  const prev=a.tgt,P=G.P;
+  const huntOn=a.hunt&&P.alive&&P!==b;
+  if(huntOn){const dp=dist(b,P);if(dp<a.aggro*1.3){best=P;bd=dp;}}
+  a.tgt=(best&&bd<a.aggro*(huntOn&&best===P?1.3:1))?best:null;a.tgtD=bd;
+  if(a.tgt&&a.tgt!==prev)a.react=rand(.25,.65)*(a.reactK||1);
   const out=Math.hypot(b.x-gz.x,b.y-gz.y)>gz.r-70;
   const low=b.hp<b.maxHp*.35;
   // pociones cercanas
@@ -605,7 +625,20 @@ function botThink(b){
 }
 function botUpdate(b,dt){
   const a=b.ai;
-  a.t-=dt;a.strafeT-=dt;a.react-=dt;a.wT-=dt;a.sT-=dt;
+  a.t-=dt;a.strafeT-=dt;a.react-=dt;a.wT-=dt;a.sT-=dt;a.dodgeT=(a.dodgeT||0)-dt;
+  if(G.L>=1.2&&b.dashCd<=0&&a.dodgeT<=0){
+    a.dodgeT=.25;
+    for(const q of G.ps){
+      if(q.owner===b)continue;
+      const dx=b.x-q.x,dy=b.y-q.y,d=Math.hypot(dx,dy);
+      if(d>170||d<20)continue;
+      const sp=Math.hypot(q.vx,q.vy)||1;
+      if((q.vx*dx+q.vy*dy)/(sp*d)>.93){
+        if(Math.random()<Math.min(.8,.12*G.L)){doDash(b,-q.vy/sp*a.strafe,q.vx/sp*a.strafe);}
+        break;
+      }
+    }
+  }
   if(a.t<=0){a.t=.2+Math.random()*.15;botThink(b);}
   if(a.strafeT<=0){a.strafe*=-1;a.strafeT=rand(.9,2.4);}
   let dx=0,dy=0;
@@ -634,7 +667,7 @@ function botUpdate(b,dt){
   if(t){
     const d=dist(b,t);
     b.aim=leadAngle(b,t);
-    if(d<rangeOf(b)*.95&&b.cd<=0&&a.react<=0&&G.t>5){
+    if(d<rangeOf(b)*.95&&b.cd<=0&&a.react<=0&&G.t>Math.max(2.5,5-G.L)){
       const err=(1-a.skill)*.28+.03;
       fire(b,b.aim+(Math.random()-.5)*2*err);
     }
@@ -761,14 +794,15 @@ let lastResult=null;
 function endMatch(){
   const P=G.P;mode='over';closeLevelUp();
   const place=G.won?1:P.place||20;
-  const coins=P.kills*12+(21-place)*4+(G.won?100:0);
+  const coins=Math.round((P.kills*12+(21-place)*4+(G.won?100:0))*(1+.3*G.L));
   save.coins+=coins;save.games++;if(G.won)save.wins++;
+  if(G.won)save.streak=Math.min(8,(save.streak||0)+1);else if(place>3)save.streak=0;
   if(!save.best||place<save.best)save.best=place;persist();
   lastResult={place,kills:P.kills,coins,won:G.won};
   $('#ovTitle').textContent=G.won?'¡VICTORIA!':'Puesto #'+place+' de 20';
   $('#ovTitle').style.color=G.won?'var(--gold)':'var(--ink)';
   $('#ovWho').textContent=G.won?'Eres el último mago en pie.':(G.killer?'Te eliminó '+G.killer.name+'.':'La zona te atrapó.');
-  $('#ovStats').innerHTML='<span class="pill">⚔️ Eliminaciones <b>'+P.kills+'</b></span><span class="pill">💥 Daño <b>'+Math.round(P.dealt)+'</b></span><span class="pill">⭐ Nivel <b>'+P.level+'</b></span><span class="pill">🪙 Ganaste <b>+'+coins+'</b></span>';
+  $('#ovStats').innerHTML='<span class="pill">⚔️ Eliminaciones <b>'+P.kills+'</b></span><span class="pill">💥 Daño <b>'+Math.round(P.dealt)+'</b></span><span class="pill">⭐ Nivel <b>'+P.level+'</b></span><span class="pill">🪙 Ganaste <b>+'+coins+'</b></span><span class="pill">🎚️ <b>'+DIFFS[save.diff].name+'</b></span><span class="pill">🔥 Racha <b>'+save.streak+'</b></span>';
   showScreen('over');
 }
 
@@ -1006,6 +1040,9 @@ function refreshMenu(){
   $('#best').textContent=save.best?'#'+save.best:'-';$('#wins').textContent=save.wins;
   $('#sndBtn').textContent='Sonido: '+(save.sound?'sí':'no');
   $('#autoBtn').textContent='Disparo auto: '+(save.auto?'sí':'no');
+  const dd=DIFFS[save.diff]||DIFFS[1];
+  $('#diffBtn').textContent='Dificultad: '+dd.name;$('#diffBtn').style.color=dd.color;
+  $('#streak').textContent=save.streak||0;
   $('#nameIn').value=save.name||'';
   syncPlay();
 }
@@ -1049,6 +1086,7 @@ $('#heroBtn').addEventListener('click',()=>{renderHeroes();$('#coins2').textCont
 $('#heroBack').addEventListener('click',()=>showScreen('menu'));
 $('#sndBtn').addEventListener('click',()=>{save.sound=!save.sound;persist();refreshMenu();initAudio();});
 $('#autoBtn').addEventListener('click',()=>{save.auto=!save.auto;persist();refreshMenu();});
+$('#diffBtn').addEventListener('click',()=>{save.diff=((save.diff||0)+1)%DIFFS.length;persist();refreshMenu();});
 $('#shareBtn').addEventListener('click',async()=>{
   if(!lastResult)return;
   const t=(lastResult.won?'Gané en':'Quedé #'+lastResult.place+' en')+' Arcano Royale con '+lastResult.kills+' eliminaciones. ¿Me ganas?';
@@ -1137,7 +1175,7 @@ function frame(ts){
   render();
 }
 resize();showScreen('menu');requestAnimationFrame(frame);
-window.__arcano={start:startMatch,step:(n,dt)=>{for(let i=0;i<n&&mode==='play';i++){update(dt||.05,dt||.05);const t=cameraTarget();G.camx=t.x;G.camy=t.y;}},state:()=>G,addXp:(n)=>addXp(G.P,n),mode:()=>mode,back:handleBack,safe:()=>safe,U:()=>U};
+window.__arcano={start:startMatch,step:(n,dt)=>{for(let i=0;i<n&&mode==='play';i++){update(dt||.05,dt||.05);const t=cameraTarget();G.camx=t.x;G.camy=t.y;}},state:()=>G,addXp:(n)=>addXp(G.P,n),mode:()=>mode,back:handleBack,safe:()=>safe,U:()=>U,setDiff:(d,st)=>{save.diff=d;save.streak=st||0},save:()=>save};
 })();
 </script>
 
