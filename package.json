@@ -1,19 +1,100 @@
-{
-  "name": "arcano-royale",
-  "version": "1.0.0",
-  "private": true,
-  "description": "Battle royale de magos para celular",
-  "scripts": {
-    "build": "python3 tools/build.py",
-    "sync": "npx cap sync android",
-    "open": "npx cap open android"
-  },
-  "dependencies": {
-    "@capacitor/android": "^7.0.0",
-    "@capacitor/cli": "^7.0.0",
-    "@capacitor/core": "^7.0.0"
-  },
-  "devDependencies": {
-    "@capacitor/assets": "^3.0.5"
-  }
-}
+name: Compilar APK de Android
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: npm install
+      - run: npx cap add android
+      - name: Pantalla horizontal
+        run: |
+          sed -i 's/android:name=".MainActivity"/android:name=".MainActivity" android:screenOrientation="sensorLandscape"/' android/app/src/main/AndroidManifest.xml
+          grep -q sensorLandscape android/app/src/main/AndroidManifest.xml
+      - name: Pantalla completa, muescas y pantalla siempre encendida
+        run: |
+          PKG=$(node -p "require('./capacitor.config.json').appId")
+          DIR="android/app/src/main/java/$(echo "$PKG" | tr . /)"
+          test -d "$DIR"
+          cat > "$DIR/MainActivity.java" <<'JAVA'
+          package PACKAGE_NAME;
+
+          import android.os.Build;
+          import android.os.Bundle;
+          import android.view.WindowManager;
+          import android.webkit.JavascriptInterface;
+          import androidx.core.graphics.Insets;
+          import androidx.core.view.ViewCompat;
+          import androidx.core.view.WindowCompat;
+          import androidx.core.view.WindowInsetsCompat;
+          import androidx.core.view.WindowInsetsControllerCompat;
+          import com.getcapacitor.BridgeActivity;
+
+          public class MainActivity extends BridgeActivity {
+            private volatile String insetsDp = "0,0,0,0";
+
+            public class InsetsBridge {
+              @JavascriptInterface
+              public String get() { return insetsDp; }
+            }
+
+            @Override
+            public void onCreate(Bundle savedInstanceState) {
+              super.onCreate(savedInstanceState);
+              getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+              if (Build.VERSION.SDK_INT >= 28) {
+                WindowManager.LayoutParams lp = getWindow().getAttributes();
+                lp.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES;
+                getWindow().setAttributes(lp);
+              }
+              WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+              ViewCompat.setOnApplyWindowInsetsListener(getWindow().getDecorView(), (v, insets) -> {
+                Insets c = insets.getInsets(WindowInsetsCompat.Type.displayCutout());
+                float d = getResources().getDisplayMetrics().density;
+                insetsDp = (c.top / d) + "," + (c.right / d) + "," + (c.bottom / d) + "," + (c.left / d);
+                return ViewCompat.onApplyWindowInsets(v, insets);
+              });
+              if (getBridge() != null && getBridge().getWebView() != null) {
+                getBridge().getWebView().addJavascriptInterface(new InsetsBridge(), "ArcanoInsets");
+              }
+              hideBars();
+            }
+
+            private void hideBars() {
+              WindowInsetsControllerCompat c = WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+              c.setSystemBarsBehavior(WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+              c.hide(WindowInsetsCompat.Type.systemBars());
+            }
+
+            @Override
+            public void onResume() {
+              super.onResume();
+              hideBars();
+            }
+
+            @Override
+            public void onWindowFocusChanged(boolean hasFocus) {
+              super.onWindowFocusChanged(hasFocus);
+              if (hasFocus) hideBars();
+            }
+          }
+          JAVA
+          sed -i "s/PACKAGE_NAME/$PKG/" "$DIR/MainActivity.java"
+          grep -q "package $PKG;" "$DIR/MainActivity.java"
+      - run: npx cap sync android
+      - name: Compilar APK
+        run: cd android && chmod +x gradlew && ./gradlew assembleDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: arcano-royale-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
