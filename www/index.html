@@ -125,6 +125,10 @@ h2{font-family:var(--display);font-weight:400;margin:0;font-size:clamp(32px,10vw
   .card i{font-size:36px}.card b{font-size:21px}.card span{font-size:15px}
   .modal .panel{max-width:520px}.modal h3{font-size:34px}
 }
+.err{margin:-6px 0 0;color:var(--bad);font-weight:800;font-size:14px}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-9px)}40%{transform:translateX(8px)}60%{transform:translateX(-6px)}80%{transform:translateX(4px)}}
+input#nameIn.bad{border-color:var(--bad);animation:shake .4s}
+#play.off{opacity:.55;filter:saturate(.5)}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -141,7 +145,8 @@ h2{font-family:var(--display);font-weight:400;margin:0;font-size:clamp(32px,10vw
     <span class="pill">🏆 Mejor puesto <b id="best">-</b></span>
     <span class="pill">👑 Victorias <b id="wins">0</b></span>
   </div>
-  <input id="nameIn" maxlength="14" placeholder="Tu nombre de mago" autocomplete="off" aria-label="Tu nombre de mago">
+  <input id="nameIn" maxlength="14" placeholder="Escribe tu nombre para jugar" autocomplete="off" aria-label="Tu nombre de mago" aria-describedby="nameErr" required>
+  <p id="nameErr" class="err" role="alert" hidden>Escribe tu nombre para poder jugar.</p>
   <button class="btn big" id="play">JUGAR</button>
   <div class="row">
     <button class="btn sm" id="heroBtn">Héroes</button>
@@ -1002,6 +1007,7 @@ function refreshMenu(){
   $('#sndBtn').textContent='Sonido: '+(save.sound?'sí':'no');
   $('#autoBtn').textContent='Disparo auto: '+(save.auto?'sí':'no');
   $('#nameIn').value=save.name||'';
+  syncPlay();
 }
 function renderHeroes(){
   const g=$('#heroGrid');g.innerHTML='';
@@ -1020,8 +1026,24 @@ function renderHeroes(){
 }
 let toastT=0;
 function toast(t){const e=$('#toast');e.textContent=t;e.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>{e.hidden=true},2200);}
-$('#play').addEventListener('click',()=>{save.name=$('#nameIn').value.trim().slice(0,14);persist();enterImmersive();startMatch();});
-$('#again').addEventListener('click',()=>{enterImmersive();startMatch();});
+function nameOk(){return $('#nameIn').value.trim().length>0}
+function syncPlay(){
+  const ok=nameOk();
+  $('#play').classList.toggle('off',!ok);
+  if(ok){$('#nameErr').hidden=true;$('#nameIn').classList.remove('bad');}
+}
+function tryPlay(){
+  const i=$('#nameIn');
+  if(!nameOk()){
+    $('#nameErr').hidden=false;i.classList.remove('bad');void i.offsetWidth;i.classList.add('bad');
+    try{i.focus()}catch(e){}buzz(30);return;
+  }
+  save.name=i.value.trim().slice(0,14);persist();enterImmersive();startMatch();
+}
+$('#nameIn').addEventListener('input',syncPlay);
+$('#nameIn').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();tryPlay();}});
+$('#play').addEventListener('click',tryPlay);
+$('#again').addEventListener('click',()=>{if(!save.name||!save.name.trim()){showScreen('menu');return;}enterImmersive();startMatch();});
 $('#toMenu').addEventListener('click',()=>showScreen('menu'));
 $('#heroBtn').addEventListener('click',()=>{renderHeroes();$('#coins2').textContent=save.coins;showScreen('heroes');});
 $('#heroBack').addEventListener('click',()=>showScreen('menu'));
