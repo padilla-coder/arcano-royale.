@@ -17,6 +17,10 @@ jobs:
           java-version: 21
       - run: npm install
       - run: npx cap add android
+      - name: Bloquear pantalla en horizontal
+        run: |
+          sed -i 's/android:name=".MainActivity"/android:name=".MainActivity" android:screenOrientation="sensorLandscape"/' android/app/src/main/AndroidManifest.xml
+          grep -q sensorLandscape android/app/src/main/AndroidManifest.xml
       - run: npx cap sync android
       - name: Compilar APK
         run: cd android && chmod +x gradlew && ./gradlew assembleDebug
