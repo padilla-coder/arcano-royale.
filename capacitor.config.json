@@ -1,4 +1,4 @@
-name: Compilar APK de Android
+name: arcano-royale
 
 on:
   workflow_dispatch:
