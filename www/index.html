@@ -211,9 +211,9 @@ function persist(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(save));}catc
 /* ---------- contenido ---------- */
 const ARENA=1500;
 const HEROES=[
-  {sp:'piro',name:'Piro',title:'Maestro del fuego',color:'#ff7a2f',el:0,price:0,perk:'+12% de daño',apply:w=>{w.dmgM*=1.12}},
-  {sp:'gelida',name:'Gélida',title:'Reina del hielo',color:'#4fd8ff',el:1,price:300,perk:'+12% de velocidad',apply:w=>{w.spdM*=1.12}},
-  {sp:'voltio',name:'Voltio',title:'Invocador de rayos',color:'#c28bff',el:2,price:500,perk:'+15% de cadencia',apply:w=>{w.rateM*=1.15}},
+  {sp:'piro',name:'Piro',title:'Maestro del fuego',color:'#ff7a2f',el:0,price:0,perk:'+12% daño · todo hechizo quema',apply:w=>{w.dmgM*=1.12;w.hBurn=3.2;w.fireX=1.6}},
+  {sp:'gelida',name:'Gélida',title:'Reina del hielo',color:'#4fd8ff',el:1,price:300,perk:'+12% velocidad · todo hechizo ralentiza',apply:w=>{w.spdM*=1.12;w.hSlow=.3;w.iceX=1.45}},
+  {sp:'voltio',name:'Voltio',title:'Invocador de rayos',color:'#c28bff',el:2,price:500,perk:'+15% cadencia · atraviesa +1 enemigo',apply:w=>{w.rateM*=1.15;w.pierce++}},
   {sp:'nox',name:'Nox',title:'Nigromante',color:'#6fe08a',el:0,price:800,perk:'Roba 8% de vida y +15 de vida',apply:w=>{w.lifesteal+=.08;w.maxHp+=15;w.hp+=15}}
 ];
 const ELS=[
@@ -721,8 +721,11 @@ function update(dt,rdt){
         if(w.inv>0)continue;
         const e=ELS[p.el];
         hurt(w,p.dmg,p.owner);
-        if(e.burn){w.burnT=3;w.burnDps=e.burn*p.owner.dmgM;w.burnSrc=p.owner;}
-        if(e.slow){w.slowT=1.6;w.slowF=e.slow;}
+        const o=p.owner;
+        let bd=e.burn?e.burn*(o.fireX||1):0;if((o.hBurn||0)>bd)bd=o.hBurn;
+        if(bd){w.burnT=o.hBurn?4:3;w.burnDps=bd*o.dmgM;w.burnSrc=o;}
+        let sf=e.slow?Math.min(.7,e.slow*(o.iceX||1)):0;if((o.hSlow||0)>sf)sf=o.hSlow;
+        if(sf){w.slowT=o.hSlow?2.2:1.6;w.slowF=sf;}
         spark(p.x,p.y,e.glow,6);sfx('hit',w);
         if(p.pierce>0){p.pierce--;(p.hit||(p.hit=new Set())).add(w);}else{dead=true;break;}
       }
