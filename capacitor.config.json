@@ -1,0 +1,9 @@
+{
+  "appId": "com.arcanoroyale.game",
+  "appName": "Arcano Royale",
+  "webDir": "www",
+  "backgroundColor": "#150f2e",
+  "android": {
+    "allowMixedContent": false
+  }
+}

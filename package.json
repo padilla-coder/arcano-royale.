@@ -1,0 +1,19 @@
+{
+  "name": "arcano-royale",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Battle royale de magos para celular",
+  "scripts": {
+    "build": "python3 tools/build.py",
+    "sync": "npx cap sync android",
+    "open": "npx cap open android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.0.0",
+    "@capacitor/cli": "^7.0.0",
+    "@capacitor/core": "^7.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^3.0.5"
+  }
+}
