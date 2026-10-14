@@ -6,9 +6,6 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -271,8 +268,7 @@ fun MusicApp(vm: PlayerViewModel, onDelete: (Song) -> Unit) {
                     is Overlay.Settings -> SettingsScreen(vm, { overlay = it }) { overlay = null }
                     null -> when (tab) {
                         0 -> HomeScreen(vm, onDelete) { overlay = it }
-                        1 -> ExploreScreen(vm)
-                        2 -> SearchScreen(vm, onDelete, showBack = false) { tab = 0 }
+                        1 -> SearchScreen(vm, onDelete, showBack = false) { tab = 0 }
                         else -> LibraryScreen(vm, onDelete) { overlay = it }
                     }
                 }
@@ -281,9 +277,8 @@ fun MusicApp(vm: PlayerViewModel, onDelete: (Song) -> Unit) {
             NavigationBar(containerColor = Bg) {
                 val navItems = listOf(
                     Triple("Principal", Icons.Default.Home, 0),
-                    Triple("Explorar", Icons.Default.Explore, 1),
-                    Triple("Buscar", Icons.Default.Search, 2),
-                    Triple("Biblioteca", Icons.Default.LibraryMusic, 3)
+                    Triple("Buscar", Icons.Default.Search, 1),
+                    Triple("Biblioteca", Icons.Default.LibraryMusic, 2)
                 )
                 navItems.forEach { (label, icon, idx) ->
                     NavigationBarItem(
@@ -495,12 +490,12 @@ private fun LibraryScreen(vm: PlayerViewModel, onDelete: (Song) -> Unit, open: (
             "Biblioteca", fontSize = 24.sp, fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 8.dp)
         )
-        ScrollableTabRow(selectedTabIndex = sub, containerColor = Bg, contentColor = Color.White, edgePadding = 8.dp) {
-            listOf("Canciones", "Álbumes", "Artistas", "Me gusta", "Guardadas", "Descargas").forEachIndexed { i, t ->
+        TabRow(selectedTabIndex = sub, containerColor = Bg, contentColor = Color.White) {
+            listOf("Canciones", "Álbumes", "Artistas", "Me gusta").forEachIndexed { i, t ->
                 Tab(selected = sub == i, onClick = { sub = i }, text = { Text(t, fontSize = 13.sp, maxLines = 1) })
             }
         }
-        if (songs.isEmpty() && sub != 4) {
+        if (songs.isEmpty()) {
             Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
                 Text("No se encontraron canciones", color = Muted)
             }
@@ -542,26 +537,12 @@ private fun LibraryScreen(vm: PlayerViewModel, onDelete: (Song) -> Unit, open: (
                     }
                 }
             }
-            3 -> if (favs.isEmpty()) {
+            else -> if (favs.isEmpty()) {
                 Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
                     Text("Aún no tienes canciones con Me gusta", color = Muted)
                 }
             } else {
                 SongList(favs, vm, onDelete, Modifier.weight(1f)) { vm.play(favs, it) }
-            }
-            4 -> SavedList(vm, Modifier.weight(1f))
-            else -> {
-                val dl = songs.filter { it.folder.contains("Jamendo") }
-                if (dl.isEmpty()) {
-                    Box(Modifier.weight(1f).fillMaxWidth().padding(32.dp), contentAlignment = Alignment.Center) {
-                        Text(
-                            "Aún no has descargado música desde Explorar",
-                            color = Muted, textAlign = TextAlign.Center
-                        )
-                    }
-                } else {
-                    SongList(dl, vm, onDelete, Modifier.weight(1f)) { vm.play(dl, it) }
-                }
             }
         }
     }
@@ -873,173 +854,5 @@ private fun SettingsScreen(vm: PlayerViewModel, open: (Overlay) -> Unit, onBack:
             }
         }
         item { Spacer(Modifier.height(24.dp)) }
-    }
-}
-
-// ---------------------------------------------------------------- explorar (Jamendo)
-
-@Composable
-private fun GenreChip(label: String, selected: Boolean, onClick: () -> Unit) {
-    Box(
-        Modifier.clip(RoundedCornerShape(8.dp))
-            .background(if (selected) Color.White else Color(0x4DFFFFFF))
-            .clickable { onClick() }
-            .padding(horizontal = 16.dp, vertical = 10.dp)
-    ) {
-        Text(
-            label, fontSize = 15.sp, fontWeight = FontWeight.Medium,
-            color = if (selected) Color.Black else Color.White
-        )
-    }
-}
-
-@Composable
-private fun OnlineRow(t: OnlineTrack, vm: PlayerViewModel, onClick: () -> Unit) {
-    val prog = vm.downloadProgress[t.id]
-    val done = vm.isDownloaded(t)
-    val saved = vm.isSaved(t)
-    Row(
-        Modifier.fillMaxWidth().clickable { onClick() }
-            .padding(start = 16.dp, end = 4.dp, top = 6.dp, bottom = 6.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Art(t.toSong(), Modifier.size(52.dp))
-        Spacer(Modifier.width(12.dp))
-        Column(Modifier.weight(1f)) {
-            Text(t.title, fontSize = 15.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
-            Text(
-                "${t.artist} · ${fmt(t.durationSec * 1000L)}",
-                color = Muted, fontSize = 12.sp, maxLines = 1, overflow = TextOverflow.Ellipsis
-            )
-            if (prog != null) {
-                LinearProgressIndicator(
-                    progress = { prog },
-                    modifier = Modifier.fillMaxWidth().padding(top = 6.dp).height(3.dp),
-                    color = Accent,
-                    trackColor = Color(0xFF444444)
-                )
-            }
-        }
-        IconButton(onClick = { vm.toggleSaved(t) }) {
-            Icon(
-                if (saved) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
-                if (saved) "Quitar de guardadas" else "Guardar para después",
-                tint = if (saved) Accent else Color.White
-            )
-        }
-        IconButton(onClick = { vm.downloadOnline(t) }, enabled = !done && prog == null) {
-            when {
-                done -> Icon(Icons.Default.CheckCircle, "Descargada", tint = Accent)
-                prog != null -> Text("${(prog * 100).toInt()}%", fontSize = 12.sp, color = Muted)
-                else -> Icon(
-                    Icons.Default.Download, "Descargar",
-                    tint = if (t.downloadAllowed) Color.White else Color(0xFF555555)
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun ExploreScreen(vm: PlayerViewModel) {
-    var q by remember { mutableStateOf("") }
-    var genre by remember { mutableStateOf<String?>(null) }
-    val genres = listOf(
-        "Pop" to "pop", "Rock" to "rock", "Electrónica" to "electronic",
-        "Jazz" to "jazz", "Lo-fi" to "lofi", "Hip hop" to "hiphop"
-    )
-    val configured = !JAMENDO_CLIENT_ID.startsWith("PON_AQUI")
-    val err = vm.onlineError
-
-    LaunchedEffect(configured) {
-        if (configured && vm.onlineTracks.isEmpty()) vm.searchOnline(null, null)
-    }
-
-    Column(Modifier.fillMaxSize()) {
-        Text(
-            "Explorar", fontSize = 24.sp, fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 8.dp)
-        )
-        TextField(
-            value = q,
-            onValueChange = { q = it },
-            singleLine = true,
-            placeholder = { Text("Buscar en Jamendo") },
-            trailingIcon = {
-                IconButton(onClick = { vm.searchOnline(q, genre) }) { Icon(Icons.Default.Search, "Buscar") }
-            },
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-            keyboardActions = KeyboardActions(onSearch = { vm.searchOnline(q, genre) }),
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
-        )
-        LazyRow(
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(genres) { (label, tag) ->
-                GenreChip(label, genre == tag) {
-                    genre = if (genre == tag) null else tag
-                    vm.searchOnline(q, genre)
-                }
-            }
-        }
-        when {
-            !configured -> Box(Modifier.weight(1f).fillMaxWidth().padding(32.dp), contentAlignment = Alignment.Center) {
-                Text(
-                    "Falta tu client_id de Jamendo. Pégalo en el archivo JamendoApi.kt (primera línea de código) y vuelve a compilar.",
-                    color = Muted, textAlign = TextAlign.Center
-                )
-            }
-            vm.onlineLoading -> Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = Accent)
-            }
-            err != null -> Column(
-                Modifier.weight(1f).fillMaxWidth().padding(32.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(err, color = Muted, textAlign = TextAlign.Center)
-                TextButton(onClick = { vm.searchOnline(q, genre) }) { Text("Reintentar") }
-            }
-            else -> LazyColumn(Modifier.weight(1f)) {
-                item { SectionTitle(if (q.isBlank() && genre == null) "Populares esta semana" else "Resultados") }
-                if (vm.onlineTracks.isEmpty()) {
-                    item { Text("Sin resultados", color = Muted, modifier = Modifier.padding(16.dp)) }
-                }
-                items(vm.onlineTracks.size) { i ->
-                    OnlineRow(vm.onlineTracks[i], vm) { vm.playOnline(vm.onlineTracks, i) }
-                }
-                item {
-                    Text(
-                        "Música libre de Jamendo (licencias Creative Commons). Con internet escuchas en streaming; " +
-                            "al descargar, la canción se guarda en Música/Jamendo y suena sin conexión.",
-                        color = Muted, fontSize = 12.sp, modifier = Modifier.padding(16.dp)
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun SavedList(vm: PlayerViewModel, modifier: Modifier) {
-    val saved = vm.savedOnline
-    if (saved.isEmpty()) {
-        Box(modifier.fillMaxWidth().padding(32.dp), contentAlignment = Alignment.Center) {
-            Text(
-                "Aún no guardas canciones. En Explorar toca el marcador de una canción para guardarla.",
-                color = Muted, textAlign = TextAlign.Center
-            )
-        }
-    } else {
-        LazyColumn(modifier) {
-            items(saved.size) { i -> OnlineRow(saved[i], vm) { vm.playOnline(saved, i) } }
-            item {
-                Text(
-                    "Las que no has descargado necesitan internet para sonar.",
-                    color = Muted, fontSize = 12.sp, modifier = Modifier.padding(16.dp)
-                )
-            }
-        }
     }
 }

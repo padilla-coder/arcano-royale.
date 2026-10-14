@@ -3,12 +3,10 @@ package com.mimusica.player
 import android.app.Application
 import android.content.ComponentName
 import android.content.Context
-import android.widget.Toast
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
@@ -53,49 +51,6 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     var autoContinue by mutableStateOf(prefs.getBoolean("auto_continue", true)); private set
-
-    // ---- Explorar (Jamendo) ----
-    var onlineTracks by mutableStateOf<List<OnlineTrack>>(emptyList()); private set
-    var onlineLoading by mutableStateOf(false); private set
-    var onlineError by mutableStateOf<String?>(null); private set
-    val downloadProgress = mutableStateMapOf<String, Float>()
-    var downloadedOnline by mutableStateOf(
-        prefs.getStringSet("jamendo_downloaded", emptySet())!!.mapNotNull { s ->
-            val p = s.split(":")
-            if (p.size == 2) p[0] to (p[1].toLongOrNull() ?: 0L) else null
-        }.toMap()
-    ); private set
-    private val onlineSongs = mutableMapOf<String, Song>()
-
-    var savedOnline by mutableStateOf(loadSaved()); private set
-
-    private fun loadSaved(): List<OnlineTrack> = try {
-        val arr = org.json.JSONArray(prefs.getString("saved_online", "[]"))
-        (0 until arr.length()).map { trackFromJson(arr.getJSONObject(it)) }
-    } catch (e: Exception) {
-        emptyList()
-    }
-
-    fun isSaved(t: OnlineTrack): Boolean = savedOnline.any { it.id == t.id }
-
-    fun toggleSaved(t: OnlineTrack) {
-        savedOnline = if (isSaved(t)) savedOnline.filter { it.id != t.id } else listOf(t) + savedOnline
-        val arr = org.json.JSONArray()
-        savedOnline.forEach { arr.put(it.toJson()) }
-        prefs.edit().putString("saved_online", arr.toString()).apply()
-    }
-
-    private fun saveDownloaded() {
-        putSet("jamendo_downloaded", downloadedOnline.map { "${it.key}:${it.value}" }.toSet())
-    }
-
-    fun localSongFor(t: OnlineTrack): Song? =
-        downloadedOnline[t.id]?.let { lid -> allSongs.firstOrNull { it.id == lid } }
-
-    fun isDownloaded(t: OnlineTrack): Boolean {
-        val lid = downloadedOnline[t.id] ?: return false
-        return allSongs.any { it.id == lid }
-    }
 
     var current by mutableStateOf<Song?>(null); private set
     var isPlaying by mutableStateOf(false); private set
@@ -144,9 +99,8 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
 
     private fun syncCurrent() {
         val c = controller ?: return
-        val mid = c.currentMediaItem?.mediaId
-        val id = mid?.toLongOrNull()
-        current = id?.let { i -> allSongs.firstOrNull { it.id == i } } ?: mid?.let { onlineSongs[it] }
+        val id = c.currentMediaItem?.mediaId?.toLongOrNull()
+        current = id?.let { i -> allSongs.firstOrNull { it.id == i } }
         durationMs = if (c.duration == C.TIME_UNSET) 0L else c.duration
         positionMs = c.currentPosition
         isPlaying = c.isPlaying
@@ -234,53 +188,6 @@ class PlayerViewModel(app: Application) : AndroidViewModel(app) {
     fun setAutoContinue(v: Boolean) {
         autoContinue = v
         prefs.edit().putBoolean("auto_continue", v).apply()
-    }
-
-    fun searchOnline(query: String?, tag: String?) {
-        viewModelScope.launch {
-            onlineLoading = true
-            onlineError = null
-            try {
-                val order = if (query.isNullOrBlank()) "popularity_week" else "relevance"
-                onlineTracks = JamendoApi.tracks(query, tag, order)
-            } catch (e: Exception) {
-                onlineError = "No se pudo conectar. Revisa tu internet y tu client_id de Jamendo."
-            }
-            onlineLoading = false
-        }
-    }
-
-    fun playOnline(list: List<OnlineTrack>, index: Int) {
-        val c = controller ?: return
-        list.forEach { onlineSongs["j:${it.id}"] = it.toSong() }
-        c.shuffleModeEnabled = false
-        // Si ya la descargaste, suena la copia local (sin internet)
-        c.setMediaItems(list.map { t -> localSongFor(t)?.toMediaItem() ?: t.toMediaItem() }, index, 0L)
-        c.prepare()
-        c.play()
-        syncCurrent()
-    }
-
-    fun downloadOnline(t: OnlineTrack) {
-        val ctx = getApplication<Application>()
-        if (!t.downloadAllowed || t.downloadUrl.isEmpty()) {
-            Toast.makeText(ctx, "El artista no permite descargar esta canción", Toast.LENGTH_SHORT).show()
-            return
-        }
-        if (isDownloaded(t) || downloadProgress.containsKey(t.id)) return
-        downloadProgress[t.id] = 0f
-        viewModelScope.launch {
-            val localId = Downloader.download(ctx, t) { p -> downloadProgress[t.id] = p }
-            downloadProgress.remove(t.id)
-            if (localId != null) {
-                downloadedOnline = downloadedOnline + (t.id to localId)
-                saveDownloaded()
-                loadSongs()
-                Toast.makeText(ctx, "Descargada: ${t.title}", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(ctx, "No se pudo descargar", Toast.LENGTH_SHORT).show()
-            }
-        }
     }
 
     fun shufflePlay(list: List<Song>) {
