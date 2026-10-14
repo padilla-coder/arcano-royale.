@@ -17,6 +17,11 @@ jobs:
           java-version: 21
       - run: npm install
       - run: npx cap add android
+      - name: Icono de la app (Piro)
+        run: |
+          mkdir -p resources
+          cp icon-only.png icon-foreground.png icon-background.png resources/
+          npx capacitor-assets generate --android || echo "No se pudo generar el icono, se usa el predeterminado"
       - name: Pantalla horizontal
         run: |
           sed -i 's/android:name=".MainActivity"/android:name=".MainActivity" android:screenOrientation="sensorLandscape"/' android/app/src/main/AndroidManifest.xml
