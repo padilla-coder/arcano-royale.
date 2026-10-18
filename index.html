@@ -266,21 +266,21 @@ input#nameIn.bad{border-color:var(--bad);animation:shake .4s}
     <button class="btn sm" id="autoBtn">Disparo auto: sí</button>
     <button class="btn sm" id="lvlBtn">Nivel 1</button>
     <button class="btn sm" id="diffBtn">Dificultad: Difícil</button>
-    <button class="btn sm creator" id="creatorPanelBtn" type="button" title="Panel privado del desarrollador">⚙️ Panel Creador</button>
+    <button class="btn sm creator ownerOnly" id="creatorPanelBtn" type="button" style="display:none" title="Panel privado del desarrollador">⚙️ Panel Creador</button>
   </div>
 
   <!-- Banner de Publicidad Pasiva Real -->
-  <div class="ad-banner-box" id="menuAdBanner">
+  <div class="ad-banner-box" id="menuAdBanner" style="display:none" hidden>
     <span class="ad-banner-tag">Patrocinio</span>
     <div class="ad-banner-content">
       <div class="ad-banner-title" id="bannerTitle">⚡ Servidores Arcano Royale & Comunidad</div>
-      <div class="ad-banner-sub" id="bannerSub">Impresión pasiva registrada · Remuneración real para el creador</div>
+      <div class="ad-banner-sub" id="bannerSub">Novedades de Arcano Royale</div>
     </div>
     <button class="ad-banner-btn" id="bannerActionBtn" type="button">Explorar</button>
   </div>
 
   <p class="how">Stick izquierdo para moverte, derecho para apuntar. Esquiva con dash, rompe cofres del tesoro, atrapa runas mágicas y genera oro activo y pasivo. En PC: WASD, ratón, 1 al 5, Espacio y Q.</p>
-  <small id="ver" style="opacity:.55;font-size:11px">Versión 16 · Arcano Royale · Ruleta 1/día, Tienda VIP elegante y Panel del Creador</small>
+  <small id="ver" style="opacity:.55;font-size:11px">Versión 18 · Música de lobby, sonidos de botones y panel privado</small>
   </div>
 </section>
 
@@ -348,13 +348,20 @@ input#nameIn.bad{border-color:var(--bad);animation:shake .4s}
 
   <div style="display:flex;gap:10px;justify-content:center;margin-top:10px;flex-wrap:wrap">
     <button class="btn" id="realShopBack">Volver al Menú</button>
-    <button class="btn sm creator" id="goToCreatorPanelBtn" type="button">⚙️ Configurar Mis Pasarelas de Cobro</button>
+    <button class="btn sm creator ownerOnly" id="goToCreatorPanelBtn" type="button" style="display:none">⚙️ Configurar Mis Pasarelas de Cobro</button>
   </div>
 </section>
 
 <!-- Pantalla: Panel de Monetización Real para el Creador -->
 <section class="screen" id="creatorPanel" hidden>
   <h2>💼 Centro de Monetización y Negocio Real</h2>
+  <div style="background:rgba(255,207,74,.1);border:1px solid var(--gold);border-radius:12px;padding:10px 14px;max-width:680px;font-size:13px;text-align:left;line-height:1.5">
+    <b>Estado de cobros:</b> las compras con dinero real todavía <b>no están activas</b>. Para cobrar en Google Play:<br>
+    1) Cuenta de desarrollador en Play Console (pago único de US$25).<br>
+    2) Perfil de pagos de Google: ahí registras tu cuenta para recibir el dinero. Esa pantalla te dirá si acepta Nequi, Nu o solo cuentas de banco: verifícalo ahí.<br>
+    3) Integrar Google Play Billing en la app (las compras de monedas y héroes deben pasar por Google Play).<br>
+    Mientras tanto la tienda muestra «Próximamente» a los jugadores.
+  </div>
   <p class="tag">Monitorea tus ingresos activos y pasivos, configura tus métodos de cobro y aprende a transferir tus ganancias a tu banco.</p>
 
   <div class="tab-nav">
@@ -496,7 +503,7 @@ input#nameIn.bad{border-color:var(--bad);animation:shake .4s}
     <button class="btn sm" id="shareBtn">Compartir</button>
   </div>
   <!-- Banner de Publicidad Pasiva en Fin de Partida -->
-  <div class="ad-banner-box" id="overAdBanner" style="margin-top:12px">
+  <div class="ad-banner-box" id="overAdBanner" style="display:none" hidden>
     <span class="ad-banner-tag">Patrocinio</span>
     <div class="ad-banner-content">
       <div class="ad-banner-title">🗡️ ¿Quieres ser invencible en la arena?</div>
@@ -759,6 +766,57 @@ function sfx(k,w){
   }
 }
 function buzz(ms){try{if(navigator.vibrate)navigator.vibrate(ms)}catch(e){}}
+
+/* ---------- música del lobby (generada con WebAudio, sin archivos) ---------- */
+const MUS={gain:null,filter:null,next:0,step:0,on:false,timer:0,want:false};
+const CHORDS=[[57,60,64],[53,57,60],[48,52,55],[55,59,62]]; /* La menor, Fa, Do, Sol */
+const midi=n=>440*Math.pow(2,(n-69)/12);
+function musNote(f,t,d,type,vol,att){
+  const o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(vol,t+(att||.02));g.gain.exponentialRampToValueAtTime(.0001,t+d);
+  o.connect(g);g.connect(MUS.filter);o.start(t);o.stop(t+d+.05);
+}
+function musSchedule(){
+  if(!MUS.on||!AC)return;
+  const spb=60/84/2;
+  while(MUS.next<AC.currentTime+.6){
+    const st=MUS.step%32,chord=CHORDS[Math.floor(st/8)%4],t=MUS.next;
+    if(st%8===0){chord.forEach(n=>musNote(midi(n),t,spb*8.5,'triangle',.05,.5));musNote(midi(chord[0]-12),t,spb*7.5,'sine',.09,.05);}
+    if(st%2===0||st%8===3){musNote(midi(chord[[0,2,1,2,0,2,1,2][st%8]]+12),t,spb*1.8,'sine',.035,.01);}
+    if(st%16===12)musNote(midi(chord[2]+24),t,spb*3,'sine',.025,.01);
+    MUS.next+=spb;MUS.step++;
+  }
+}
+function musSet(on){
+  if(!AC)return;
+  if(!MUS.gain){
+    MUS.gain=AC.createGain();MUS.gain.gain.value=0;
+    MUS.filter=AC.createBiquadFilter();MUS.filter.type='lowpass';MUS.filter.frequency.value=1800;
+    MUS.filter.connect(MUS.gain);MUS.gain.connect(AC.destination);
+  }
+  const t=AC.currentTime;MUS.gain.gain.cancelScheduledValues(t);MUS.gain.gain.setTargetAtTime(on?.55:0,t,on?.6:.25);
+  if(on&&!MUS.on){MUS.on=true;MUS.next=AC.currentTime+.1;MUS.step=0;MUS.timer=setInterval(musSchedule,200);musSchedule();}
+  if(!on&&MUS.on){MUS.on=false;clearInterval(MUS.timer);}
+}
+setInterval(()=>{
+  const want=!!AC&&AC.state==='running'&&!!save.sound&&mode==='menu'&&!document.hidden;
+  if(want!==MUS.want){MUS.want=want;musSet(want);}
+},300);
+document.addEventListener('visibilitychange',()=>{try{if(AC){if(document.hidden)AC.suspend();else AC.resume();}}catch(e){}});
+window.addEventListener('pointerdown',()=>initAudio(),{passive:true});
+window.addEventListener('keydown',()=>initAudio());
+
+/* ---------- sonidos de botones ---------- */
+document.addEventListener('click',e=>{
+  const b=e.target.closest&&e.target.closest('button');
+  if(!b||b.disabled||b.id==='hPrev'||b.id==='hNext')return;
+  initAudio();
+  const id=b.id||'';
+  if(id==='play'||id==='again'){tone(523,.09,'triangle',.07,0);setTimeout(()=>tone(784,.14,'triangle',.07,0),70);}
+  else if(/Back|toMenu|closeAdBtn|cfNo|cfYes/.test(id)||/^(Volver|Menú|Cerrar)/.test(b.textContent.trim())){tone(420,.07,'triangle',.06,-120);}
+  else if(b.classList.contains('buy-btn')){tone(660,.08,'triangle',.07,0);setTimeout(()=>tone(990,.12,'triangle',.07,0),60);}
+  else{tone(620,.06,'triangle',.06,180);}
+},true);
 
 /* ---------- entrada ---------- */
 const inp={keys:{},mouse:false,mdown:false,mpx:0,mpy:0,moveId:null,aimId:null,mBase:null,mCur:null,aBase:null,aCur:null};
@@ -1947,6 +2005,7 @@ function drawHud(){
 
 /* ---------- pantallas ---------- */
 function showScreen(n){
+  if(n==='creatorPanel'&&!ownerOK)n='menu';
   for(const id of['menu','heroes','talents','quests','over','realShop','creatorPanel']){
     const el=$('#'+id);if(el)el.hidden=(id!==n);
   }
@@ -2446,30 +2505,13 @@ async function recordAdImpression(type){
 function refreshShopUI(){
   const lbl=$('#shopModeLabel');
   if(!lbl)return;
-  if(!monData.config||monData.config.sandboxMode){
-    lbl.textContent='Modo Pruebas / Sandbox (Entrega inmediata para verificar funcionamiento)';
-    lbl.style.color='#ffd24a';
-  }else if(monData.config.stripePaymentLink){
-    lbl.textContent='Modo Producción Real (Stripe Checkout Activo · Depósitos directos a tu banco)';
-    lbl.style.color='#6fe08a';
-  }else if(monData.config.paypalMeLink){
-    lbl.textContent='Modo Producción Real (PayPal Activo · Retirable a cuenta bancaria o Nequi)';
-    lbl.style.color='#6fe08a';
-  }else{
-    lbl.textContent='Modo Sandbox (Configura tus pasarelas de cobro en el Panel del Creador)';
-    lbl.style.color='#ffcf4a';
-  }
+  if(ownerOK){lbl.textContent='Modo propietario: entrega de prueba (no se cobra nada)';lbl.style.color='#ffd24a';}
+  else{lbl.textContent='Próximamente: las compras se activarán con Google Play';lbl.style.color='#ffcf4a';}
 }
 
 async function processRealPurchase(pid,name,price){
   const cfg=monData.config||{};
-  // Si está en producción con enlace de Stripe o PayPal configurado, podemos abrir la pasarela
-  if(!cfg.sandboxMode&&cfg.stripePaymentLink){
-    try{window.open(cfg.stripePaymentLink,'_blank');}catch(e){}
-  }else if(!cfg.sandboxMode&&cfg.paypalMeLink){
-    try{window.open(cfg.paypalMeLink,'_blank');}catch(e){}
-  }
-
+  if(!ownerOK){toast('🛒 Las compras con dinero real llegarán pronto. ¡Gracias por tu apoyo!');return;}
   // Notificar al servidor para registrar la venta y remuneración real
   try{
     const res=await fetch('/api/monetization/purchase',{
@@ -2480,7 +2522,7 @@ async function processRealPurchase(pid,name,price){
         productName:name,
         amountUSD:price,
         customerName:save.name||'Mago Valiente',
-        paymentMethod:cfg.sandboxMode?'Sandbox (Prueba)':'Stripe / PayPal'
+        paymentMethod:'Prueba (propietario)'
       })
     });
     if(res.ok){
@@ -2522,6 +2564,34 @@ document.querySelectorAll('.buy-btn').forEach(btn=>{
     processRealPurchase(pid,name,price);
   });
 });
+
+/* ---------- modo propietario: el panel solo aparece con un gesto secreto + PIN ---------- */
+var ownerOK=false;try{ownerOK=sessionStorage.getItem('arcano_owner')==='1'}catch(e){}
+function applyOwner(){document.querySelectorAll('.ownerOnly').forEach(e=>{e.style.display=ownerOK?'':'none'});refreshShopUI();}
+async function pinHash(t){
+  try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('arcano|'+t));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');}
+  catch(e){let h=5381;for(const ch of 'arcano|'+t)h=((h<<5)+h+ch.charCodeAt(0))|0;return'f'+h;}
+}
+async function ownerUnlock(){
+  let stored=null;try{stored=localStorage.getItem('arcano_owner_pin')}catch(e){}
+  if(!stored){
+    const n=prompt('Modo propietario: crea un PIN de al menos 4 caracteres');
+    if(!n||n.length<4)return;
+    try{localStorage.setItem('arcano_owner_pin',await pinHash(n))}catch(e){}
+  }else{
+    const n=prompt('PIN de propietario');
+    if(!n)return;
+    if(await pinHash(n)!==stored){toast('PIN incorrecto');return;}
+  }
+  ownerOK=true;try{sessionStorage.setItem('arcano_owner','1')}catch(e){}
+  applyOwner();toast('Modo propietario activado');
+}
+let logoTaps=0,logoT=0;
+document.querySelector('#menu .logo').addEventListener('click',()=>{
+  const n=Date.now();if(n-logoT>3000)logoTaps=0;logoT=n;
+  if(++logoTaps>=7){logoTaps=0;ownerUnlock();}
+});
+applyOwner();
 
 $('#realShopBtn').addEventListener('click',()=>{showScreen('realShop');});
 $('#realShopBack').addEventListener('click',()=>showScreen('menu'));
@@ -2790,7 +2860,7 @@ function frame(ts){
   render();
 }
 resize();showScreen('menu');requestAnimationFrame(frame);
-window.__arcano={ELS,COMBO,EICO,fire:(w,a)=>fire(w,a),drawChar,mix,HEROES,start:startMatch,step:(n,dt)=>{for(let i=0;i<n&&mode==='play';i++){update(dt||.05,dt||.05);const t=cameraTarget();G.camx=t.x;G.camy=t.y;}},state:()=>G,addXp:(n)=>addXp(G.P,n),mode:()=>mode,back:handleBack,safe:()=>safe,U:()=>U,setDiff:(d,st)=>{save.diff=d;save.streak=st||0},save:()=>save};
+window.__arcano={music:()=>({on:MUS.on,want:MUS.want,state:AC&&AC.state,gain:MUS.gain&&MUS.gain.gain.value}),ELS,COMBO,EICO,fire:(w,a)=>fire(w,a),drawChar,mix,HEROES,start:startMatch,step:(n,dt)=>{for(let i=0;i<n&&mode==='play';i++){update(dt||.05,dt||.05);const t=cameraTarget();G.camx=t.x;G.camy=t.y;}},state:()=>G,addXp:(n)=>addXp(G.P,n),mode:()=>mode,back:handleBack,safe:()=>safe,U:()=>U,setDiff:(d,st)=>{save.diff=d;save.streak=st||0},save:()=>save};
 })();
 </script>
 
