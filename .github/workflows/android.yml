@@ -19,9 +19,14 @@ jobs:
       - run: npx cap add android
       - name: Icono de la app (Piro)
         run: |
-          mkdir -p resources
-          cp icon-only.png icon-foreground.png icon-background.png resources/
-          npx capacitor-assets generate --android || echo "No se pudo generar el icono, se usa el predeterminado"
+          if [ -f icon-only.png ] && [ -f icon-foreground.png ] && [ -f icon-background.png ]; then
+            mkdir -p resources
+            cp icon-only.png icon-foreground.png icon-background.png resources/
+            npx capacitor-assets generate --android || echo "No se pudo generar el icono, se usa el predeterminado"
+          else
+            echo "Faltan las imagenes icon-only.png, icon-foreground.png o icon-background.png en la raiz: se usa el icono predeterminado"
+            ls
+          fi
       - name: Pantalla horizontal
         run: |
           sed -i 's/android:name=".MainActivity"/android:name=".MainActivity" android:screenOrientation="sensorLandscape"/' android/app/src/main/AndroidManifest.xml
@@ -71,6 +76,7 @@ jobs:
               });
               if (getBridge() != null && getBridge().getWebView() != null) {
                 getBridge().getWebView().addJavascriptInterface(new InsetsBridge(), "ArcanoInsets");
+                getBridge().getWebView().getSettings().setMediaPlaybackRequiresUserGesture(false);
               }
               hideBars();
             }
