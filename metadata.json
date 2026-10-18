@@ -1,0 +1,8 @@
+{
+  "name": "Arcano Royale",
+  "description": "Battle royale de magos en tiempo real con 20 jugadores, hechizos elementales y zona menguante.",
+  "permissions": [],
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#150f2e">
 <title>Arcano Royale</title>
+<meta name="description" content="Battle royale de magos en tiempo real con 20 jugadores, hechizos elementales y zona menguante.">
+<meta property="og:title" content="Arcano Royale">
+<meta property="og:description" content="Battle royale de magos en tiempo real con 20 jugadores, hechizos elementales y zona menguante.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
@@ -138,6 +141,77 @@ h2{font-family:var(--display);font-weight:400;margin:0;font-size:clamp(32px,10vw
 @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-9px)}40%{transform:translateX(8px)}60%{transform:translateX(-6px)}80%{transform:translateX(4px)}}
 input#nameIn.bad{border-color:var(--bad);animation:shake .4s}
 #play.off{opacity:.55;filter:saturate(.5)}
+/* ---- Nuevas mecánicas: Mina Pasiva, Talentos, Misiones y Ruleta ---- */
+.mine-card{width:min(440px,94vw);background:linear-gradient(135deg,rgba(36,27,74,.95),rgba(66,41,115,.95));border:2px solid var(--gold);border-radius:18px;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;box-shadow:0 4px 18px rgba(255,207,74,.18);box-sizing:border-box}
+.mine-left{display:flex;flex-direction:column;text-align:left;gap:2px}
+.mine-title{font-family:var(--display);font-size:16px;color:var(--gold);display:flex;align-items:center;gap:6px}
+.mine-sub{font-size:12px;color:var(--mute);font-weight:700}
+.mine-right{display:flex;align-items:center;gap:10px}
+.mine-stash{font-family:var(--display);font-size:22px;color:var(--gold);text-shadow:0 2px 4px #000;white-space:nowrap}
+.btn.gold{background:var(--gold);color:#241200;box-shadow:0 5px 0 #b38600}
+.btn.gold:active{box-shadow:0 1px 0 #b38600}
+.grid-2col{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px;width:min(660px,100%)}
+.card-panel{background:var(--panel);border:2px solid var(--panel2);border-radius:18px;padding:12px 14px;display:flex;flex-direction:column;gap:8px;text-align:left}
+.card-panel.highlight{border-color:var(--gold);background:rgba(42,30,85,.85)}
+.card-header{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.card-title{font-family:var(--display);font-size:18px;margin:0;display:flex;align-items:center;gap:6px}
+.badge{padding:3px 8px;border-radius:8px;font-size:11px;font-weight:800;background:var(--panel2);color:var(--mute)}
+.badge.gold{background:var(--gold);color:#201200}
+.badge.green{background:var(--good);color:#05220c}
+.prog-bar{width:100%;height:8px;background:rgba(0,0,0,.5);border-radius:4px;overflow:hidden;margin-top:4px}
+.prog-fill{height:100%;background:var(--gold);transition:width .2s}
+.btn-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:4px}
+.wheel-container{position:relative;width:240px;height:240px;margin:10px auto}
+.wheel-pointer{position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:12px solid transparent;border-right:12px solid transparent;border-top:20px solid var(--gold);z-index:10;filter:drop-shadow(0 2px 4px #000)}
+
+/* ---- SISTEMA DE MONETIZACIÓN ELEGANTE Y NO INTRUSIVO ---- */
+.btn.vip{background:linear-gradient(135deg,#5e2392,#7928ca);color:#ffd24a;font-weight:800;border:1.5px solid rgba(255,210,74,.5);box-shadow:0 3px 0 #3d1466}
+.btn.vip:active{box-shadow:0 1px 0 #3d1466}
+.btn.creator{background:rgba(255,255,255,.07);color:#8fe8b5;font-weight:700;border:1px solid rgba(111,224,138,.3);box-shadow:none;padding:8px 14px}
+.btn.creator:active{background:rgba(255,255,255,.14)}
+
+.ad-banner-box{width:min(440px,94vw);background:rgba(18,12,38,.5);border:1px dashed rgba(255,207,74,.25);border-radius:10px;padding:6px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;box-sizing:border-box;margin:6px auto;text-align:left;position:relative;opacity:.88}
+.ad-banner-tag{font-size:9px;font-weight:800;color:var(--mute);background:rgba(255,255,255,.07);padding:2px 5px;border-radius:4px;letter-spacing:.5px;text-transform:uppercase}
+.ad-banner-content{display:flex;flex-direction:column;gap:1px;flex:1}
+.ad-banner-title{font-size:12px;font-weight:700;color:#fff}
+.ad-banner-sub{font-size:10px;color:#9b94c4}
+.ad-banner-btn{font-size:11px;padding:4px 10px;background:var(--panel2);color:var(--gold);border-radius:6px;font-weight:700;border:1px solid rgba(255,207,74,.2);cursor:pointer;white-space:nowrap}
+
+.shop-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;width:min(720px,96vw);margin:10px auto}
+.shop-card{background:linear-gradient(145deg,rgba(32,22,68,.95),rgba(46,31,98,.95));border:2px solid var(--panel2);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:10px;text-align:left;position:relative;box-shadow:0 6px 20px rgba(0,0,0,.4);box-sizing:border-box}
+.shop-card.featured{border-color:var(--gold);box-shadow:0 0 24px rgba(255,207,74,.25)}
+.shop-badge{position:absolute;top:-10px;right:14px;background:linear-gradient(90deg,#ff5e62,#ff9966);color:#fff;font-size:11px;font-weight:900;padding:3px 10px;border-radius:10px;letter-spacing:.5px;box-shadow:0 3px 8px rgba(0,0,0,.4)}
+.shop-title{font-family:var(--display);font-size:20px;color:#fff;display:flex;align-items:center;gap:8px}
+.shop-price{font-family:var(--display);font-size:26px;color:var(--gold);margin:2px 0}
+.shop-price small{font-size:13px;color:var(--mute);font-family:Nunito,sans-serif;font-weight:700}
+.shop-perks{display:flex;flex-direction:column;gap:6px;font-size:13px;color:#d8d2f5;padding:0;margin:4px 0 8px}
+.shop-perk{display:flex;align-items:center;gap:6px}
+
+.tab-nav{display:flex;gap:6px;width:min(680px,96vw);justify-content:center;margin:6px 0;flex-wrap:wrap}
+.tab-btn{background:var(--panel);border:2px solid var(--panel2);color:var(--mute);padding:8px 16px;border-radius:12px;font-weight:800;font-size:14px;cursor:pointer;transition:.2s}
+.tab-btn.active{background:var(--gold);color:#241200;border-color:var(--gold)}
+
+.metrics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;width:min(680px,96vw);margin:8px auto}
+.metric-box{background:var(--panel);border:2px solid var(--panel2);border-radius:16px;padding:14px;text-align:left}
+.metric-box.highlight{border-color:#52c270;background:rgba(20,55,30,.6)}
+.metric-num{font-family:var(--display);font-size:28px;color:#fff;margin:4px 0}
+.metric-num.gold{color:var(--gold)}
+.metric-num.green{color:#52c270}
+.metric-sub{font-size:12px;color:var(--mute);font-weight:700}
+
+.guide-step{background:var(--panel);border:1.5px solid var(--panel2);border-radius:16px;padding:14px;text-align:left;display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.guide-step h4{margin:0;font-family:var(--display);font-size:17px;color:var(--gold);display:flex;align-items:center;gap:8px}
+.guide-step p{margin:0;font-size:13px;line-height:1.45;color:#e4e0ff}
+.guide-tag{display:inline-block;background:rgba(255,207,74,.15);color:var(--gold);padding:2px 8px;border-radius:6px;font-size:11px;font-weight:800}
+
+.field-group{display:flex;flex-direction:column;gap:4px;text-align:left;width:100%}
+.field-group label{font-size:12px;font-weight:800;color:#c0b9e8}
+.field-group input{width:100%;background:rgba(0,0,0,.45);border:2px solid var(--panel2);border-radius:10px;padding:10px 12px;color:#fff;font-family:Nunito,sans-serif;font-size:14px;box-sizing:border-box}
+.field-group input:focus{border-color:var(--gold);outline:none}
+
+.rewarded-box{background:linear-gradient(135deg,#181030,#2a184e);border:2px solid #ffd24a;border-radius:20px;padding:20px;display:flex;flex-direction:column;align-items:center;gap:12px;max-width:440px;width:92vw}
+.ad-video-mock{width:100%;height:180px;background:#0d081f;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.1)}
+.ad-countdown{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.8);color:var(--gold);font-weight:900;padding:4px 10px;border-radius:12px;font-size:13px;font-family:var(--display)}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -164,38 +238,313 @@ input#nameIn.bad{border-color:var(--bad);animation:shake .4s}
     <span class="pill">👑 Victorias <b id="wins">0</b></span>
     <span class="pill">🔥 Racha <b id="streak">0</b></span>
   </div>
+
+  <!-- Tarjeta de Ingreso Pasivo: Mina Arcana -->
+  <div class="mine-card" id="mineCard">
+    <div class="mine-left">
+      <div class="mine-title">⚗️ Mina Arcana <span class="badge gold" id="mineLvlBadge">Nv. 1</span></div>
+      <div class="mine-sub" id="mineRateText">+15 🪙 / min · Ingreso Pasivo</div>
+    </div>
+    <div class="mine-right">
+      <div class="mine-stash" id="mineStashText">🪙 0</div>
+      <button class="btn sm gold" id="mineClaimBtn" type="button">¡Recolectar!</button>
+    </div>
+  </div>
+
   <input id="nameIn" maxlength="14" placeholder="Escribe tu nombre para jugar" autocomplete="off" aria-label="Tu nombre de mago" aria-describedby="nameErr" required>
   <p id="nameErr" class="err" role="alert" hidden>Escribe tu nombre para poder jugar.</p>
   <button class="btn big" id="play">JUGAR</button>
   <div class="row">
-    <button class="btn sm" id="heroBtn">Héroes</button>
+    <button class="btn sm" id="heroBtn">🧙 Héroes</button>
+    <button class="btn sm" id="talentsBtn" style="color:var(--gold)">⚡ Talentos</button>
+    <button class="btn sm" id="questsBtn" style="color:#6fe08a">📜 Misiones</button>
+    <button class="btn sm" id="wheelBtn" style="color:#ff7a2f">🎡 Ruleta</button>
+    <button class="btn sm vip" id="realShopBtn" type="button">💎 Tienda VIP</button>
+  </div>
+  <div class="row">
     <button class="btn sm" id="sndBtn">Sonido: sí</button>
     <button class="btn sm" id="autoBtn">Disparo auto: sí</button>
     <button class="btn sm" id="lvlBtn">Nivel 1</button>
     <button class="btn sm" id="diffBtn">Dificultad: Difícil</button>
+    <button class="btn sm creator" id="creatorPanelBtn" type="button" title="Panel privado del desarrollador">⚙️ Panel Creador</button>
   </div>
-  <p class="how">Stick izquierdo para moverte, derecho para apuntar. Cambia de elemento, esquiva con el dash y lanza el meteoro cuando se cargue. En PC: WASD, ratón, teclas 1 al 5, Espacio y Q.</p>
-  <small id="ver" style="opacity:.55;font-size:11px">Versión 13 · 13-oct-2026 · personajes, 10 niveles, mezclas</small>
+
+  <!-- Banner de Publicidad Pasiva Real -->
+  <div class="ad-banner-box" id="menuAdBanner">
+    <span class="ad-banner-tag">Patrocinio</span>
+    <div class="ad-banner-content">
+      <div class="ad-banner-title" id="bannerTitle">⚡ Servidores Arcano Royale & Comunidad</div>
+      <div class="ad-banner-sub" id="bannerSub">Impresión pasiva registrada · Remuneración real para el creador</div>
+    </div>
+    <button class="ad-banner-btn" id="bannerActionBtn" type="button">Explorar</button>
+  </div>
+
+  <p class="how">Stick izquierdo para moverte, derecho para apuntar. Esquiva con dash, rompe cofres del tesoro, atrapa runas mágicas y genera oro activo y pasivo. En PC: WASD, ratón, 1 al 5, Espacio y Q.</p>
+  <small id="ver" style="opacity:.55;font-size:11px">Versión 16 · Arcano Royale · Ruleta 1/día, Tienda VIP elegante y Panel del Creador</small>
   </div>
 </section>
 
+<!-- Pantalla: Tienda VIP -->
+<section class="screen" id="realShop" hidden>
+  <h2>💎 Tienda Arcano Royale</h2>
+  <p class="tag">Mejoras de combate, héroes legendarios y apoyo al desarrollo independiente.</p>
+  <div style="background:rgba(255,207,74,.12);border:1px solid var(--gold);padding:8px 16px;border-radius:12px;font-size:13px;max-width:640px;margin-bottom:6px" id="shopModeNotice">
+    ℹ️ <b>Modo de Compra Activo:</b> <span id="shopModeLabel">Modo Pruebas / Sandbox (Entrega instantánea para verificar funcionamiento)</span>
+  </div>
+
+  <div class="shop-grid">
+    <!-- Producto 1: Pase VIP -->
+    <div class="shop-card featured">
+      <div class="shop-badge">⭐ MÁS POPULAR</div>
+      <div class="shop-title">🌟 Pase Arcano VIP</div>
+      <div class="shop-price">$4.99 <small>USD</small></div>
+      <div class="shop-perks">
+        <div class="shop-perk">✨ Desbloquea a <b>Solaria</b> y <b>Zephyr</b> de inmediato</div>
+        <div class="shop-perk">⚡ <b>x2 Producción Permanente</b> de la Mina Pasiva</div>
+        <div class="shop-perk">👑 Corona de Mago VIP en tu nombre de batalla</div>
+        <div class="shop-perk">🪙 +1,500 Monedas Arcanas de bienvenida</div>
+      </div>
+      <button class="btn vip buy-btn" data-pid="vip_pass" data-name="Pase Arcano VIP" data-price="4.99" type="button">¡Comprar Pase ($4.99)!</button>
+    </div>
+
+    <!-- Producto 2: Bolsa de Monedas -->
+    <div class="shop-card">
+      <div class="shop-title">🪙 Bolsa de 2,500 Monedas</div>
+      <div class="shop-price">$1.99 <small>USD</small></div>
+      <div class="shop-perks">
+        <div class="shop-perk">🪙 2,500 Monedas para subir talentos al instante</div>
+        <div class="shop-perk">🎡 5 Giros extra de la Ruleta de la Fortuna</div>
+        <div class="shop-perk">⚔️ Ventaja competitiva inmediata en combate</div>
+      </div>
+      <button class="btn gold buy-btn" data-pid="coins_bag" data-name="Bolsa de 2,500 Monedas" data-price="1.99" type="button">Comprar Monedas ($1.99)</button>
+    </div>
+
+    <!-- Producto 3: Cofre Fundador -->
+    <div class="shop-card">
+      <div class="shop-badge" style="background:#52c270">MEJOR VALOR</div>
+      <div class="shop-title">👑 Cofre Fundador Supremo</div>
+      <div class="shop-price">$9.99 <small>USD</small></div>
+      <div class="shop-perks">
+        <div class="shop-perk">🌟 Incluye el <b>Pase Arcano VIP</b> Permanente</div>
+        <div class="shop-perk">🪙 <b>15,000 Monedas Arcanas</b></div>
+        <div class="shop-perk">🧙 Todos los 6 héroes desbloqueados para siempre</div>
+        <div class="shop-perk">🏆 Insignia exclusiva 'Fundador Legendario'</div>
+      </div>
+      <button class="btn ok buy-btn" data-pid="founder_chest" data-name="Cofre Fundador Supremo" data-price="9.99" type="button">Comprar Cofre ($9.99)</button>
+    </div>
+
+    <!-- Producto 4: Donación / Café -->
+    <div class="shop-card">
+      <div class="shop-title">☕ Donar al Desarrollador</div>
+      <div class="shop-price">$2.00 <small>USD</small></div>
+      <div class="shop-perks">
+        <div class="shop-perk">❤️ Apoyo voluntario para costear servidores y desarrollo</div>
+        <div class="shop-perk">🎁 Regalo de +500 Monedas en el juego</div>
+        <div class="shop-perk">🎖️ Mención de honor en los créditos</div>
+      </div>
+      <button class="btn buy-btn" data-pid="dev_coffee" data-name="Donación de Café al Desarrollador" data-price="2.00" type="button">Invitar un Café ($2.00)</button>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:10px;justify-content:center;margin-top:10px;flex-wrap:wrap">
+    <button class="btn" id="realShopBack">Volver al Menú</button>
+    <button class="btn sm creator" id="goToCreatorPanelBtn" type="button">⚙️ Configurar Mis Pasarelas de Cobro</button>
+  </div>
+</section>
+
+<!-- Pantalla: Panel de Monetización Real para el Creador -->
+<section class="screen" id="creatorPanel" hidden>
+  <h2>💼 Centro de Monetización y Negocio Real</h2>
+  <p class="tag">Monitorea tus ingresos activos y pasivos, configura tus métodos de cobro y aprende a transferir tus ganancias a tu banco.</p>
+
+  <div class="tab-nav">
+    <button class="tab-btn active" id="tabMetricsBtn" type="button">📊 Métricas y Ganancias</button>
+    <button class="tab-btn" id="tabGatewaysBtn" type="button">⚙️ Configurar Cobros (Stripe/PayPal)</button>
+    <button class="tab-btn" id="tabGuideBtn" type="button">📖 Cómo Cobrar en tu Banco</button>
+  </div>
+
+  <!-- Pestaña 1: Métricas -->
+  <div id="tabMetricsContent" style="width:100%">
+    <div class="metrics-grid">
+      <div class="metric-box highlight">
+        <div class="metric-sub">💰 Remuneración Total Estimada</div>
+        <div class="metric-num green" id="metricTotalUsd">$0.00 USD</div>
+        <div class="metric-sub" id="metricTotalCop">Aprox. $0 COP</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-sub">💳 Ingresos Activos (Ventas)</div>
+        <div class="metric-num gold" id="metricActiveUsd">$0.00 USD</div>
+        <div class="metric-sub" id="metricPurchasesCount">0 compras directas</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-sub">📺 Ingresos Pasivos (Publicidad)</div>
+        <div class="metric-num" id="metricPassiveUsd" style="color:#6fe08a">$0.00 USD</div>
+        <div class="metric-sub" id="metricAdsCount">0 impresiones · 0 videos</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-sub">📈 eCPM Promedio Estimado</div>
+        <div class="metric-num" style="color:#7fe3ff">$4.50 USD</div>
+        <div class="metric-sub">Por cada 1,000 impresiones</div>
+      </div>
+    </div>
+
+    <div style="background:var(--panel);border:1.5px solid var(--panel2);border-radius:16px;padding:14px;max-width:680px;width:96vw;margin:12px auto;text-align:left">
+      <h4 style="margin:0 0 8px;font-family:var(--display);color:var(--gold)">📜 Historial de Ventas y Remuneraciones Recientes</h4>
+      <div id="txList" style="max-height:160px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;font-size:12px;color:#d8d2f5">
+        <div style="opacity:.6">Aún no hay transacciones registradas. Haz una compra de prueba en la Tienda VIP para verla aquí.</div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:8px">
+      <button class="btn sm gold" id="testTxBtn" type="button">🧪 Simular Venta de Prueba ($4.99)</button>
+      <button class="btn sm danger" id="resetMetricsBtn" type="button">Reiniciar Contadores</button>
+    </div>
+  </div>
+
+  <!-- Pestaña 2: Configuración de Pasarelas -->
+  <div id="tabGatewaysContent" style="width:100%;display:none">
+    <div style="background:var(--panel);border:2px solid var(--panel2);border-radius:18px;padding:16px;max-width:640px;width:96vw;margin:10px auto;display:flex;flex-direction:column;gap:12px">
+      <div class="field-group">
+        <label for="cfgStripe">Enlace de Pago de Stripe (Payment Link o Checkout URL):</label>
+        <input id="cfgStripe" placeholder="https://buy.stripe.com/ejemplo_o_tu_enlace">
+        <small style="color:var(--mute);font-size:11px">Permite a los jugadores pagar con tarjeta de crédito/débito desde cualquier país del mundo.</small>
+      </div>
+      <div class="field-group">
+        <label for="cfgPaypal">Enlace de PayPal.me o Email de PayPal:</label>
+        <input id="cfgPaypal" placeholder="https://paypal.me/tu_usuario o tu_correo@paypal.com">
+        <small style="color:var(--mute);font-size:11px">Los pagos llegan directo a tu saldo PayPal y los retiras a tu banco.</small>
+      </div>
+      <div class="field-group">
+        <label for="cfgKofi">Enlace de Ko-fi / Buy Me a Coffee / Mercado Pago:</label>
+        <input id="cfgKofi" placeholder="https://ko-fi.com/tu_cuenta o https://link.mercadopago.com/...">
+        <small style="color:var(--mute);font-size:11px">Ideal para recibir pagos en moneda local o donaciones sin comisiones.</small>
+      </div>
+      <div class="field-group">
+        <label for="cfgAdsense">ID de Editor Google AdSense / CrazyGames / Poki:</label>
+        <input id="cfgAdsense" placeholder="ca-pub-XXXXXXXXXXXXXXXX o Poki App ID">
+        <small style="color:var(--mute);font-size:11px">Para monetización pasiva mediante banners y videos patrocinados.</small>
+      </div>
+      <div class="field-group">
+        <label for="cfgRate">Tasa de cambio de 1 USD a tu moneda local (COP / MXN / EUR):</label>
+        <input id="cfgRate" type="number" placeholder="4100" value="4100">
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
+        <input type="checkbox" id="cfgSandbox" style="width:20px;height:20px;cursor:pointer" checked>
+        <label for="cfgSandbox" style="cursor:pointer;font-weight:700;font-size:13px;color:#ffe27a">Modo Sandbox / Pruebas (Permite probar compras sin cobrar dinero real)</label>
+      </div>
+      <button class="btn ok" id="saveConfigBtn" type="button" style="margin-top:6px">💾 Guardar Configuración en el Servidor</button>
+    </div>
+  </div>
+
+  <!-- Pestaña 3: Guía Paso a Paso para Cobrar -->
+  <div id="tabGuideContent" style="width:100%;display:none;max-width:680px;width:96vw;margin:8px auto">
+    <div class="guide-step">
+      <h4>1. Stripe Payment Links <span class="guide-tag">Recomendado para Ventas Activas</span></h4>
+      <p><b>¿Cómo funciona?</b> Crea una cuenta gratis en <a href="https://stripe.com" target="_blank" style="color:var(--gold);text-decoration:underline">stripe.com</a>. Ve a la sección 'Payment Links' y crea un enlace para $4.99 USD. Pega ese enlace en la pestaña 'Configurar Cobros'. Cuando un jugador compra el Pase VIP, Stripe procesa la tarjeta y <b>deposita el dinero directamente en tu cuenta bancaria</b> de forma semanal o mensual.</p>
+    </div>
+    <div class="guide-step">
+      <h4>2. PayPal & Retiros Locales (Nequi / Daviplata / Bancos) <span class="guide-tag">Fácil y Rápido</span></h4>
+      <p><b>¿Cómo cobrar?</b> Crea tu enlace en <a href="https://paypal.me" target="_blank" style="color:var(--gold);text-decoration:underline">paypal.me</a>. Si estás en Colombia, puedes vincular tu cuenta de PayPal con <b>Nequi</b> o Davivienda para transferir los dólares directamente a pesos colombianos en tu celular en menos de 24 horas con una comisión mínima.</p>
+    </div>
+    <div class="guide-step">
+      <h4>3. Ingresos Pasivos con CrazyGames y Poki <span class="guide-tag">Ingreso Pasivo Automático</span></h4>
+      <p><b>¿Cómo ganar sin vender nada?</b> Portales como <b>CrazyGames</b> y <b>Poki</b> reciben millones de jugadores cada día. Puedes postular Arcano Royale en su portal de desarrolladores. Ellos integran anuncios automáticos al iniciar partida y te pagan entre <b>$100 y más de $1,000 USD al mes</b> por transferencia bancaria internacional según las horas jugadas.</p>
+    </div>
+    <div class="guide-step">
+      <h4>4. Google Play Store con Capacitor Android <span class="guide-tag">Móvil y AdMob</span></h4>
+      <p>Este proyecto ya tiene configurado Capacitor Android. Al exportar el APK y subirlo a Google Play Store con una cuenta de desarrollador ($25 pago único), integras Google AdMob para mostrar anuncios pasivos a miles de personas en sus celulares Android.</p>
+    </div>
+  </div>
+
+  <button class="btn" id="creatorPanelBack" style="margin-top:12px">Volver al Menú</button>
+</section>
+
 <section class="screen" id="heroes" hidden>
-  <h2>Héroes</h2>
+  <h2>Héroes Arcanos</h2>
   <span class="pill">🪙 <b id="coins2">0</b></span>
   <div id="heroGrid"></div>
-  <button class="btn" id="heroBack">Volver</button>
+  <button class="btn" id="heroBack">Volver al Menú</button>
+</section>
+
+<section class="screen" id="talents" hidden>
+  <h2>Talentos y Alquimia</h2>
+  <p class="tag">Mejora tus atributos de combate permanentes y maximiza la producción de tu Mina Arcana.</p>
+  <span class="pill">🪙 <b id="coinsTalents">0</b></span>
+  <div class="grid-2col" id="talentsGrid"></div>
+  <button class="btn" id="talentsBack">Volver al Menú</button>
+</section>
+
+<section class="screen" id="quests" hidden>
+  <h2>Misiones y Bounties</h2>
+  <p class="tag">Cumple objetivos de combate para generar abundantes ingresos de monedas activos.</p>
+  <span class="pill">🪙 <b id="coinsQuests">0</b></span>
+  <div style="display:flex;flex-direction:column;gap:10px;width:min(620px,100%)" id="questsList"></div>
+  <button class="btn" id="questsBack">Volver al Menú</button>
 </section>
 
 <section class="screen" id="over" hidden>
   <h2 id="ovTitle">Puesto</h2>
   <p id="ovWho"></p>
   <div id="ovStats"></div>
-  <button class="btn big" id="again">OTRA VEZ</button>
+  <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:4px 0">
+    <button class="btn big" id="again">OTRA VEZ</button>
+    <button class="btn sm gold" id="doubleCoinsBtn" type="button" style="font-size:17px;padding:12px 20px">🎡 ¡Multiplicar Botín!</button>
+    <button class="btn sm vip" id="watchAdRewardBtn" type="button" style="font-size:17px;padding:12px 20px">📺 Ver Video Anuncio (+150 🪙)</button>
+  </div>
   <div class="row">
     <button class="btn sm" id="toMenu">Menú</button>
     <button class="btn sm" id="shareBtn">Compartir</button>
   </div>
+  <!-- Banner de Publicidad Pasiva en Fin de Partida -->
+  <div class="ad-banner-box" id="overAdBanner" style="margin-top:12px">
+    <span class="ad-banner-tag">Patrocinio</span>
+    <div class="ad-banner-content">
+      <div class="ad-banner-title">🗡️ ¿Quieres ser invencible en la arena?</div>
+      <div class="ad-banner-sub">Adquiere el Pase VIP o visita a nuestros patrocinadores mágicos</div>
+    </div>
+    <button class="ad-banner-btn" id="overAdActionBtn" type="button">Ver Más</button>
+  </div>
 </section>
+
+<!-- Modal de Video Anuncio con Recompensa (Rewarded Video Ad) -->
+<div id="rewardedAdModal" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="adTitle">
+  <div class="rewarded-box">
+    <div style="display:flex;align-items:center;justify-content:space-between;width:100%">
+      <span class="badge gold">ANUNCIO PATROCINADO</span>
+      <div class="ad-countdown" id="adTimerBadge">⏳ 10 s</div>
+    </div>
+    <div class="ad-video-mock">
+      <div style="font-size:42px;animation:shake 1.5s infinite">🧙‍♂️⚡🔥</div>
+      <div style="font-family:var(--display);color:var(--gold);font-size:18px;margin-top:6px">¡Prueba el Poder Arcano Supremo!</div>
+      <div style="font-size:12px;color:#d8d2f5;text-align:center;padding:0 16px">Este anuncio patrocina el juego y genera ingresos pasivos en tiempo real para el desarrollador.</div>
+    </div>
+    <div class="prog-bar" style="height:10px">
+      <div class="prog-fill" id="adProgFill" style="width:0%;background:#52c270"></div>
+    </div>
+    <p id="adRewardNotice" style="font-size:13px;color:#ffe27a;margin:0">Mira el anuncio completo para desbloquear +150 🪙 y +1 Giro de Ruleta.</p>
+    <button class="btn ok" id="claimAdRewardBtn" type="button" disabled style="opacity:.5;cursor:not-allowed">Reclamar Recompensa (Espera 10s)</button>
+    <button class="btn sm" id="closeAdBtn" type="button" style="display:none">Cerrar</button>
+  </div>
+</div>
+
+<div id="wheelModal" class="modal" hidden role="dialog" aria-modal="true" aria-labelledby="whTitle">
+  <div class="panel">
+    <h3 id="whTitle">🎡 Ruleta de la Fortuna Arcana</h3>
+    <p id="whSub">¡Gira la rueda mágica para ganar monedas o multiplicar las ganancias de tu última batalla!</p>
+    <div id="whCooldownInfo" style="font-size:13px;color:#ffd24a;margin:-2px 0 6px"></div>
+    <div class="wheel-container">
+      <div class="wheel-pointer"></div>
+      <canvas id="wheelCanvas" width="240" height="240" style="display:block;border-radius:50%"></canvas>
+    </div>
+    <div id="whResult" style="font-family:var(--display);font-size:20px;color:var(--gold);min-height:28px"></div>
+    <div style="display:flex;flex-direction:column;gap:8px;width:100%;max-width:320px;margin:4px auto">
+      <button class="btn big ok" id="spinWheelBtn" type="button" style="font-size:20px;padding:10px 20px">¡GIRAR GRATIS (1 al día)!</button>
+      <button class="btn sm gold" id="spinPaidBtn" type="button" style="display:none;font-size:15px;padding:10px 16px">🪙 Girar por 100 Monedas</button>
+      <button class="btn sm vip" id="spinAdBtn" type="button" style="display:none;font-size:14px;padding:8px 14px">📺 Ver Video Anuncio (+1 Giro Gratis)</button>
+    </div>
+    <button class="btn sm" id="wheelCloseBtn" type="button" style="margin-top:6px">Cerrar</button>
+  </div>
+</div>
 
 <div id="levelup" hidden>
   <div id="luHead"><span>¡Subes de nivel! Elige una mejora</span><div id="luBarWrap"><div id="luBar"></div></div></div>
@@ -225,8 +574,36 @@ const safe={t:0,b:0,l:0,r:0};
 
 /* ---------- datos guardados ---------- */
 const SAVE_KEY='arcano_royale_v1';
-let save={coins:0,owned:[0],hero:0,best:0,name:'',sound:true,auto:true,games:0,wins:0,diff:1,streak:0};
-try{const s=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');if(s&&typeof s==='object')Object.assign(save,s);}catch(e){}
+let save={
+  coins:0,owned:[0],hero:0,best:0,name:'',sound:true,auto:true,games:0,wins:0,diff:1,streak:0,
+  vip:false,vipFounder:false,
+  lastMineClaim:Date.now(),
+  talents:{dmg:0,hp:0,crit:0,spd:0,greed:0,mine:0},
+  quests:[
+    {id:'kills',name:'Cazador de Magos',desc:'Elimina 4 magos rivales',target:4,prog:0,reward:150,done:false,claimed:false},
+    {id:'chests',name:'Saqueador de Cofres',desc:'Abre 1 cofre del tesoro en la arena',target:1,prog:0,reward:120,done:false,claimed:false},
+    {id:'combo',name:'Alquimia Elemental',desc:'Realiza 2 mezclas de hechizos',target:2,prog:0,reward:130,done:false,claimed:false},
+    {id:'podium',name:'Victoria en la Arena',desc:'Gana una ronda de combate',target:1,prog:0,reward:200,done:false,claimed:false}
+  ],
+  wheelLastFree:0
+};
+try{
+  const s=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');
+  if(s&&typeof s==='object'){
+    Object.assign(save,s);
+    if(!save.talents)save.talents={dmg:0,hp:0,crit:0,spd:0,greed:0,mine:0};
+    if(save.vip===undefined)save.vip=false;
+    if(save.vipFounder===undefined)save.vipFounder=false;
+    if(!save.quests||!save.quests.length){
+      save.quests=[
+        {id:'kills',name:'Cazador de Magos',desc:'Elimina 4 magos rivales',target:4,prog:0,reward:150,done:false,claimed:false},
+        {id:'chests',name:'Saqueador de Cofres',desc:'Abre 1 cofre del tesoro en la arena',target:1,prog:0,reward:120,done:false,claimed:false},
+        {id:'combo',name:'Alquimia Elemental',desc:'Realiza 2 mezclas de hechizos',target:2,prog:0,reward:130,done:false,claimed:false},
+        {id:'podium',name:'Victoria en la Arena',desc:'Gana una ronda de combate',target:1,prog:0,reward:200,done:false,claimed:false}
+      ];
+    }
+  }
+}catch(e){}
 function persist(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(save));}catch(e){}}
 
 /* ---------- contenido ---------- */
@@ -235,8 +612,63 @@ const HEROES=[
   {sp:'piro',name:'Piro',title:'Maestro del fuego',color:'#ff7a2f',el:0,price:0,perk:'+12% daño · todo hechizo quema',apply:w=>{w.dmgM*=1.12;w.hBurn=3.2;w.fireX=1.6}},
   {sp:'gelida',name:'Gélida',title:'Reina del hielo',color:'#4fd8ff',el:1,price:300,perk:'+12% velocidad · todo hechizo ralentiza',apply:w=>{w.spdM*=1.12;w.hSlow=.3;w.iceX=1.45}},
   {sp:'voltio',name:'Voltio',title:'Invocador de rayos',color:'#c28bff',el:2,price:500,perk:'+15% cadencia · atraviesa +1 enemigo',apply:w=>{w.rateM*=1.15;w.pierce++}},
-  {sp:'nox',name:'Nox',title:'Nigromante',color:'#6fe08a',el:0,price:800,perk:'Roba 8% de vida y +15 de vida',apply:w=>{w.lifesteal+=.08;w.maxHp+=15;w.hp+=15}}
+  {sp:'nox',name:'Nox',title:'Nigromante',color:'#6fe08a',el:0,price:800,perk:'Roba 8% de vida y +15 de vida',apply:w=>{w.lifesteal+=.08;w.maxHp+=15;w.hp+=15}},
+  {sp:'cat',name:'Solaria',title:'Valquiria Solar',color:'#ffd24a',el:0,price:1200,perk:'+20% prob. crítico · daño crítico x2.2 · escudo divino',apply:w=>{w.critRate=(w.critRate||.08)+.2;w.critMult=2.2;w.shield=(w.shield||0)+40;}},
+  {sp:'owl',name:'Zephyr',title:'Señor del Viento',color:'#7fe3ff',el:2,price:1600,perk:'Dash cada 1.5 s · +15% velocidad · proyectil extra',apply:w=>{w.dashCdMax=1.5;w.spdM*=1.15;w.multi++;}}
 ];
+
+const TALENTS=[
+  {id:'dmg',name:'Poder Mágico',ico:'⚔️',desc:'+5% daño base a todos tus hechizos',max:10,fn:lvl=>'+'+(lvl*5)+'% daño',cost:lvl=>Math.round(80*Math.pow(1.35,lvl))},
+  {id:'hp',name:'Vitalidad Titánica',ico:'❤️',desc:'+15 de vida máxima inicial',max:10,fn:lvl=>'+'+(lvl*15)+' HP',cost:lvl=>Math.round(70*Math.pow(1.3,lvl))},
+  {id:'crit',name:'Ojo Arcano',ico:'🎯',desc:'+3.5% probabilidad y +15% daño crítico',max:8,fn:lvl=>'+'+(lvl*3.5).toFixed(1)+'% crit',cost:lvl=>Math.round(110*Math.pow(1.4,lvl))},
+  {id:'spd',name:'Pies Alados',ico:'💨',desc:'+3% velocidad de movimiento permanente',max:8,fn:lvl=>'+'+(lvl*3)+'% vel',cost:lvl=>Math.round(90*Math.pow(1.35,lvl))},
+  {id:'greed',name:'Avaricia de Combate',ico:'🪙',desc:'+12% monedas por cada baja y victoria',max:10,fn:lvl=>'+'+(lvl*12)+'% oro',cost:lvl=>Math.round(100*Math.pow(1.35,lvl))},
+  {id:'mine',name:'Mina Alquímica (Pasiva)',ico:'⚗️',desc:'+12 monedas/minuto pasivas y +450 capacidad',max:10,fn:lvl=>'+'+(lvl*12)+' 🪙/min',cost:lvl=>Math.round(120*Math.pow(1.4,lvl))}
+];
+
+function getMineStats(){
+  const lvl=(save.talents&&save.talents.mine)||0;
+  let rate=15+lvl*12; // coins per minute
+  if(save.vip) rate*=2; // El Pase VIP duplica la producción pasiva
+  const cap=(350+lvl*450)*(save.vip?2:1);
+  return{lvl:lvl+1,rate,cap};
+}
+function getMinePending(){
+  const s=getMineStats();
+  const elapsedMinutes=(Date.now()-(save.lastMineClaim||Date.now()))/60000;
+  return Math.min(s.cap,Math.max(0,Math.floor(elapsedMinutes*s.rate)));
+}
+function getWheelCooldown(){
+  const now=Date.now();
+  const ONE_DAY=24*60*60*1000;
+  const elapsed=now-(save.wheelLastFree||0);
+  const isAvailable=elapsed>=ONE_DAY;
+  const msLeft=Math.max(0,ONE_DAY-elapsed);
+  return {isAvailable,msLeft};
+}
+function claimMine(){
+  const amt=getMinePending();
+  if(amt<=0){toast('La mina aún está extrayendo oro...');return;}
+  save.coins+=amt;
+  save.lastMineClaim=Date.now();
+  persist();
+  sfx('win');
+  toast('¡Recolectaste +'+amt+' 🪙 de tu Mina Arcana!');
+  refreshMenu();
+}
+function updateQuest(id,amt){
+  if(!save.quests)return;
+  for(const q of save.quests){
+    if(q.id===id&&!q.done){
+      q.prog=Math.min(q.target,q.prog+(amt||1));
+      if(q.prog>=q.target){
+        q.done=true;
+        banner('¡Misión cumplida: '+q.name+'! Reclama en el menú');
+      }
+    }
+  }
+  persist();
+}
 const ELS=[
   {name:'Fuego',color:'#ff7a2f',glow:'#ffd08a',dmg:15,cd:.52,spd:470,r:9,burn:3,slow:0,pierce:0},
   {name:'Hielo',color:'#4fd8ff',glow:'#d4f6ff',dmg:10,cd:.42,spd:450,r:8,burn:0,slow:.4,pierce:0},
@@ -410,18 +842,28 @@ function mix(hex,t){ // t>0 aclara, t<0 oscurece
 }
 function newWizard(name,color,isPlayer,sp){
   return{id:nextId++,sp:sp||'human',v:Math.floor(Math.random()*4),name,color,dark:mix(color,-.4),light:mix(color,.45),isPlayer,x:0,y:0,vx:0,vy:0,mvx:0,mvy:0,r:18,hp:100,maxHp:100,alive:true,aim:rand(0,TAU),
-    el:0,cd:rand(0,.4),dashCd:0,dashT:0,dashDX:0,dashDY:0,inv:0,charge:0,xp:0,level:1,kills:0,dealt:0,place:0,
+    el:0,cd:rand(0,.4),dashCd:0,dashCdMax:3,dashT:0,dashDX:0,dashDY:0,inv:0,charge:0,xp:0,level:1,kills:0,dealt:0,place:0,
     dmgM:1,spdM:1,rateM:1,rangeM:1,multi:0,pierce:0,magnet:1,regen:0,lifesteal:0,
+    shield:0,critRate:.08,critMult:1.85,combo:0,comboLast:-99,frenzyT:0,hasteT:0,matchCoins:0,greed:1,
     burnT:0,burnDps:0,burnSrc:null,slowT:0,slowF:0,lastHit:-99,lastHitBy:null,upCount:{},
     ai:{t:rand(0,.3),mode:'wander',gx:0,gy:0,tgt:null,tgtD:999,strafe:Math.random()<.5?1:-1,strafeT:rand(.5,2),react:0,
       skill:rand(.3,.8),aggro:rand(300,440),pref:rand(200,320),elPref:Math.floor(rand(0,3)),sx:0,sy:0,sT:1.2,elT:rand(3,8),wT:0}};
 }
 function inObstacle(x,y,m,obs){for(const o of obs){if(Math.hypot(x-o.x,y-o.y)<o.r+m)return true}return false}
 
+function spawnPowerUp(x,y,forcedType){
+  if(!G||!G.powUps)return;
+  const types=['shield','frenzy','haste','coin'];
+  const colors={shield:'#6fe08a',frenzy:'#ff7a2f',haste:'#4fd8ff',coin:'#ffd24a'};
+  const icons={shield:'🛡️',frenzy:'⚡',haste:'💨',coin:'🪙'};
+  const type=forcedType||types[Math.floor(Math.random()*types.length)];
+  G.powUps.push({x,y,type,color:colors[type],ico:icons[type],r:15,t:rand(0,3)});
+}
+
 function startMatch(){
   initAudio();
   const hero=HEROES[save.hero]||HEROES[0];
-  G={t:0,ws:[],ps:[],orbs:[],pots:[],obs:[],parts:[],texts:[],mets:[],feed:[],decor:[],shake:0,hurtFlash:0,banner:null,
+  G={t:0,ws:[],ps:[],orbs:[],pots:[],chests:[],powUps:[],obs:[],parts:[],texts:[],mets:[],feed:[],decor:[],shake:0,hurtFlash:0,banner:null,
      zone:{phase:0,state:'wait',t:0,cx:0,cy:0,r:ARENA,fx:0,fy:0,fr:ARENA,tx:0,ty:0,tr:ZR[1]},
      camx:0,camy:0,pending:0,choosing:false,luT:0,ending:false,endT:0,won:false,killer:null,orbT:0,P:null,hint:save.games<2?9:0};
   // obstáculos
@@ -439,7 +881,19 @@ function startMatch(){
   const total=roundsFor(T.lvl),nE=enemiesFor(T.lvl,T.round),finalR=T.round===total-1;
   let player;
   if(T.carry&&T.round>0){player=T.carry;resetCarry(player);}
-  else{T.round=0;T.carry=null;player=newWizard((save.name||'Mago').slice(0,14),hero.color,true,hero.sp);hero.apply(player);player.el=hero.el;}
+  else{
+    T.round=0;T.carry=null;player=newWizard((save.name||'Mago').slice(0,14),hero.color,true,hero.sp);
+    hero.apply(player);player.el=hero.el;
+    // Aplicar mejoras permanentes del árbol de talentos
+    const tl=save.talents||{};
+    player.dmgM*=1+(tl.dmg||0)*0.05;
+    player.maxHp+=(tl.hp||0)*15;
+    player.hp=player.maxHp;
+    player.critRate=(player.critRate||0.08)+(tl.crit||0)*0.035;
+    player.critMult=(player.critMult||1.85)+(tl.crit||0)*0.15;
+    player.spdM*=1+(tl.spd||0)*0.03;
+    player.greed=1+(tl.greed||0)*0.12;
+  }
   G.P=player;G.ws.push(player);
   G.L=Math.min(14,diffL()+(T.lvl-1)*.6+T.round*.35);
   const pool=NAMES.slice().sort(()=>Math.random()-.5),off=Math.floor(Math.random()*6);
@@ -463,6 +917,8 @@ function startMatch(){
   });
   for(let i=0;i<100;i++)spawnOrb();
   for(let i=0;i<16;i++){const p=randPoint(ARENA-90,true);G.pots.push({x:p.x,y:p.y});}
+  // Generar cofres del tesoro destructibles en la arena
+  for(let i=0;i<4;i++){const p=randPoint(ARENA-130,true);G.chests.push({x:p.x,y:p.y,hp:40,maxHp:40,r:18,color:'#ffd24a'});}
   G.camx=player.x;G.camy=player.y;
   inp.moveId=null;inp.aimId=null;
   $('#levelup').hidden=true;
@@ -520,7 +976,11 @@ function fire(w,ang){
   if(w.isPlayer){
     if(w.comboEl>=0&&w.comboEl!==w.el&&G.t-w.comboT<3){
       const k=COMBO[Math.min(ei,w.comboEl)+'_'+Math.max(ei,w.comboEl)];
-      if(k!==undefined){ei=k;w.comboEl=-1;floatText(w.x,w.y-w.r-34,'¡'+ELS[k].name+'!',ELS[k].color);G.comboFx=1.2;G.comboName=ELS[k].name;G.comboCol=ELS[k].color;sfx('level');}
+      if(k!==undefined){
+        ei=k;w.comboEl=-1;floatText(w.x,w.y-w.r-34,'¡'+ELS[k].name+'!',ELS[k].color);
+        G.comboFx=1.2;G.comboName=ELS[k].name;G.comboCol=ELS[k].color;sfx('level');
+        updateQuest('combo', 1);
+      }
     }else{w.comboEl=w.el;w.comboT=G.t;}
   }
   const e=ELS[ei],n=Math.max(e.shots||1,1+w.multi),spread=.16;
@@ -528,16 +988,25 @@ function fire(w,ang){
     const a=ang+(i-(n-1)/2)*spread,x=w.x+Math.cos(a)*(w.r+6),y=w.y+Math.sin(a)*(w.r+6);
     G.ps.push({x,y,px:x,py:y,vx:Math.cos(a)*e.spd,vy:Math.sin(a)*e.spd,dmg:e.dmg*w.dmgM*(n>1?.82:1)*(w.isPlayer?1:Math.pow(1.12,G.zone.phase)),owner:w,el:ei,r:e.r,life:rangeOf(w)/e.spd,pierce:e.pierce+w.pierce,hit:null});
   }
-  w.cd=e.cd/w.rateM;sfx('shoot',w);
+  w.cd=(e.cd/w.rateM)*(w.frenzyT>0?0.6:1);sfx('shoot',w);
 }
-function hurt(w,amt,src,zone){
+function hurt(w,amt,src,zone,isCrit){
   if(!w.alive||(G.won&&w.isPlayer))return;
   if(!zone&&w.inv>0)return;
+  if(!zone&&w.shield>0&&amt>0){
+    const abs=Math.min(w.shield,amt);
+    w.shield-=abs;amt-=abs;
+    floatText(w.x,w.y-w.r-16,'🛡️ '+Math.round(abs),'#4fd8ff');
+    spark(w.x,w.y,'#4fd8ff',4);
+  }
+  if(amt<=0)return;
   w.hp-=amt;w.lastHit=G.t;
   if(src&&src!==w){
     w.lastHitBy=src;src.dealt+=amt;src.charge=Math.min(100,src.charge+amt*.9);
     if(src.lifesteal)src.hp=Math.min(src.maxHp,src.hp+amt*src.lifesteal);
-    if(amt>=1&&(src.isPlayer||w.isPlayer))floatText(w.x,w.y-w.r-8,Math.round(amt),src.isPlayer?'#ffffff':'#ff9a9a');
+    if(amt>=1&&(src.isPlayer||w.isPlayer)){
+      floatText(w.x,w.y-w.r-8,Math.round(amt)+(isCrit?' CRIT!':''),isCrit?'#ffd24a':(src.isPlayer?'#ffffff':'#ff9a9a'));
+    }
   }
   if(w.isPlayer&&amt>=1){G.hurtFlash=Math.min(.35,G.hurtFlash+.12);buzz(12);}
   if(w.hp<=0)kill(w);
@@ -548,7 +1017,15 @@ function kill(w){
   const killer=(w.lastHitBy&&w.lastHitBy!==w&&G.t-w.lastHit<8)?w.lastHitBy:null;
   if(killer){
     killer.kills++;killer.charge=Math.min(100,killer.charge+35);killer.hp=Math.min(killer.maxHp,killer.hp+20);addXp(killer,4);
-    if(killer.isPlayer){banner('¡Eliminaste a '+w.name+'!');buzz(40);}
+    if(killer.isPlayer){
+      const bounty=Math.round(rand(18,30)*(killer.greed||1));
+      killer.matchCoins=(killer.matchCoins||0)+bounty;
+      floatText(w.x,w.y-28,'+🪙'+bounty,'#ffd24a');
+      banner('¡Eliminaste a '+w.name+'! (+🪙'+bounty+')');
+      buzz(40);
+      updateQuest('kills', 1);
+      if(Math.random()<0.4)spawnPowerUp(w.x,w.y);
+    }
   }
   feed(killer?killer.name+' eliminó a '+w.name:w.name+' cayó en la zona');
   const n=5+w.level;
@@ -572,7 +1049,7 @@ function doDash(w,dx,dy){
   if(!w.alive||w.dashCd>0||w.dashT>0)return;
   let l=Math.hypot(dx||0,dy||0);
   if(l<.1){dx=Math.cos(w.aim);dy=Math.sin(w.aim);l=1;}
-  w.dashDX=dx/l;w.dashDY=dy/l;w.dashT=.2;w.dashCd=3;w.inv=.3;
+  w.dashDX=dx/l;w.dashDY=dy/l;w.dashT=.2;w.dashCd=w.dashCdMax||3;w.inv=.3;
   spark(w.x,w.y,w.light,10);sfx('dash',w);
 }
 function castUlt(w,x,y){
@@ -608,7 +1085,7 @@ function ultPlayer(P){
 
 /* ---------- movimiento ---------- */
 function moveW(w,dx,dy,dt){
-  const sp=190*w.spdM*(w.slowT>0?1-w.slowF:1);
+  const sp=190*w.spdM*(w.slowT>0?1-w.slowF:1)*(w.hasteT>0?1.45:1);
   if(w.dashT>0){w.dashT-=dt;w.vx=w.dashDX*620;w.vy=w.dashDY*620;}
   else{const k=Math.min(1,dt*12);w.vx+=(dx*sp-w.vx)*k;w.vy+=(dy*sp-w.vy)*k;}
   w.x+=w.vx*dt;w.y+=w.vy*dt;
@@ -740,7 +1217,11 @@ function botUpdate(b,dt){
 function update(dt,rdt){
   G.t+=dt;
   const P=G.P;
-  if(P.alive)playerControl(dt);
+  if(P.alive){
+    if(P.frenzyT>0)P.frenzyT-=dt;
+    if(P.hasteT>0)P.hasteT-=dt;
+    playerControl(dt);
+  }
   for(const w of G.ws){
     if(!w.alive)continue;
     w.cd-=dt;w.dashCd-=dt;w.inv-=dt;
@@ -749,7 +1230,7 @@ function update(dt,rdt){
     if(w.regen&&G.t-w.lastHit>4)w.hp=Math.min(w.maxHp,w.hp+w.regen*dt);
     if(!w.isPlayer){botUpdate(w,dt);}
   }
-  // orbes y pociones
+  // orbes, pociones y powerups
   for(const w of G.ws){
     if(!w.alive)continue;
     const mr=55*w.magnet+w.r;
@@ -765,6 +1246,17 @@ function update(dt,rdt){
       if(Math.hypot(w.x-p.x,w.y-p.y)<w.r+12){G.pots.splice(i,1);w.hp=Math.min(w.maxHp,w.hp+35);if(w.isPlayer){sfx('heal');floatText(w.x,w.y-30,'+35','#7dffa0');}}
     }
   }
+  // recoger powerups el jugador
+  if(P.alive&&G.powUps)for(let i=G.powUps.length-1;i>=0;i--){
+    const pu=G.powUps[i];
+    if(dist(P,pu)<P.r+pu.r){
+      G.powUps.splice(i,1);sfx('heal');spark(P.x,P.y,pu.color,14);
+      if(pu.type==='shield'){P.shield=(P.shield||0)+50;floatText(P.x,P.y-28,'¡ESCUDO +50!','#6fe08a');}
+      else if(pu.type==='frenzy'){P.frenzyT=6;floatText(P.x,P.y-28,'¡FRENESÍ ARCANO!','#ff7a2f');}
+      else if(pu.type==='haste'){P.hasteT=6;floatText(P.x,P.y-28,'¡VELERIDAD!','#4fd8ff');}
+      else if(pu.type==='coin'){const c=Math.round(35*(P.greed||1));P.matchCoins=(P.matchCoins||0)+c;floatText(P.x,P.y-28,'+🪙'+c,'#ffd24a');}
+    }
+  }
   G.orbT-=dt;
   if(G.orbT<=0&&G.orbs.length<150){G.orbT=.18;spawnOrb(true);}
   // proyectiles
@@ -775,15 +1267,49 @@ function update(dt,rdt){
       const dx=p.x-o.x,dy=p.y-o.y,m=o.r+p.r;
       if(dx*dx+dy*dy<m*m){dead=true;spark(p.x,p.y,ELS[p.el].color,5);break;}
     }
+    // colisión con cofres del tesoro
+    if(!dead&&G.chests)for(let ci=G.chests.length-1;ci>=0;ci--){
+      const ch=G.chests[ci],dx=p.x-ch.x,dy=p.y-ch.y,m=ch.r+p.r;
+      if(dx*dx+dy*dy<m*m){
+        dead=true;ch.hp-=p.dmg;spark(ch.x,ch.y,'#ffd24a',6);sfx('hit');floatText(ch.x,ch.y-20,Math.round(p.dmg),'#ffd24a');
+        if(ch.hp<=0){
+          G.chests.splice(ci,1);boom(ch.x,ch.y,'#ffd24a',28);sfx('boom');sfx('win');
+          const cAmt=Math.round(rand(45,80)*(p.owner.isPlayer?(p.owner.greed||1):1));
+          if(p.owner.isPlayer){
+            p.owner.matchCoins=(p.owner.matchCoins||0)+cAmt;
+            banner('¡Cofre saqueado! +🪙'+cAmt);
+            updateQuest('chests',1);
+          }
+          for(let k=0;k<6;k++)spawnOrb(false);
+          G.pots.push({x:ch.x,y:ch.y});
+          if(Math.random()<0.6)spawnPowerUp(ch.x,ch.y);
+        }
+        break;
+      }
+    }
+    // colisión con magos
     if(!dead)for(const w of G.ws){
       if(!w.alive||w===p.owner)continue;
       if(p.hit&&p.hit.has(w))continue;
       const rr=w.r+p.r,dx=p.x-w.x,dy=p.y-w.y;
       if(dx*dx+dy*dy<rr*rr){
         if(w.inv>0)continue;
-        const e=ELS[p.el];
-        hurt(w,p.dmg,p.owner);
-        const o=p.owner;
+        const e=ELS[p.el],o=p.owner;
+        if(o.isPlayer){
+          if(G.t-(o.comboLast||0)<2.8){o.combo=(o.combo||0)+1;}else{o.combo=1;}
+          o.comboLast=G.t;
+          if(o.combo>=3){
+            const bc=2;o.matchCoins=(o.matchCoins||0)+bc;floatText(w.x+rand(-12,12),w.y-34,'+🪙'+bc,'#ffd24a');
+          }
+          if(o.combo===3)banner('¡COMBO x3! +30% Daño');
+          else if(o.combo===5)banner('¡COMBO x5! ¡IMPARABLE! 🔥');
+          else if(o.combo===8)banner('¡MASACRE ARCANO x8! ⚡');
+        }
+        let finalDmg=p.dmg;
+        if(o.isPlayer&&o.combo>1){finalDmg*=Math.min(1.6,1+(o.combo-1)*0.1);}
+        const isCrit=Math.random()<(o.critRate||0.08);
+        if(isCrit){finalDmg*=(o.critMult||1.85);}
+        hurt(w,finalDmg,o,false,isCrit);
         let bd=e.burn?e.burn*(o.fireX||1):0;if((o.hBurn||0)>bd)bd=o.hBurn;
         if(bd){w.burnT=o.hBurn?4:3;w.burnDps=bd*o.dmgM;w.burnSrc=o;}
         let sf=e.slow?Math.min(.7,e.slow*(o.iceX||1)):0;if((o.hSlow||0)>sf)sf=o.hSlow;
@@ -859,8 +1385,15 @@ let lastResult=null;
 function endMatch(){
   const P=G.P;mode='over';closeLevelUp();
   const tot=roundsFor(T.lvl),last=T.round===tot-1,done=T.round+1;
-  const coins=Math.round((P.kills*12+(G.won?60+T.round*25+(last?120:0):0))*(1+.3*G.L));
+  const greedMult=P.greed||(1+(save.talents?.greed||0)*0.12);
+  const baseKills=P.kills*15;
+  const chestAndBounty=P.matchCoins||0;
+  const winBonus=G.won?(75+T.round*30+(last?150:0)):15;
+  const coins=Math.round((baseKills+chestAndBounty+winBonus)*greedMult*(1+.25*G.L));
   save.coins+=coins;save.games++;
+  if(G.won)updateQuest('podium',1);
+  persist();
+  lastResult={place:G.won?1:2,kills:P.kills,coins,won:G.won,baseCoins:coins,matchLoot:chestAndBounty,multiplied:false};
   let title,who,btn;
   if(G.won){
     if(!last){
@@ -880,13 +1413,19 @@ function endMatch(){
     who=(G.killer?'Te eliminó '+G.killer.name+'.':'La zona te atrapó.')+' Vuelves a la ronda 1 del nivel '+T.lvl+'.';
     T.round=0;T.carry=null;save.streak=0;btn='Reintentar nivel';
   }
-  persist();
-  lastResult={place:G.won?1:2,kills:P.kills,coins,won:G.won};
   $('#ovTitle').textContent=title;
   $('#ovTitle').style.color=G.won?'var(--gold)':'var(--ink)';
   $('#ovWho').textContent=who;
   $('#again').textContent=btn;
-  $('#ovStats').innerHTML='<span class="pill">⚔️ Eliminaciones <b>'+P.kills+'</b></span><span class="pill">💥 Daño <b>'+Math.round(P.dealt)+'</b></span><span class="pill">⭐ Nivel mago <b>'+P.level+'</b></span><span class="pill">🪙 Ganaste <b>+'+coins+'</b></span><span class="pill">🏆 Nivel <b>'+(save.lvl||1)+'</b></span>';
+  $('#ovStats').innerHTML=
+    '<span class="pill">⚔️ Eliminaciones <b>'+P.kills+'</b></span>'+
+    '<span class="pill">💥 Daño <b>'+Math.round(P.dealt)+'</b></span>'+
+    '<span class="pill">💎 Botín de Arena <b>🪙 +'+(P.matchCoins||0)+'</b></span>'+
+    '<span class="pill">⭐ Nivel mago <b>'+P.level+'</b></span>'+
+    '<span class="pill">🪙 Ganaste <b>+'+coins+'</b></span>'+
+    '<span class="pill">🏆 Nivel <b>'+(save.lvl||1)+'</b></span>';
+  const dbBtn=$('#doubleCoinsBtn');
+  if(dbBtn){dbBtn.hidden=false;dbBtn.textContent='🎡 ¡Multiplicar Botín con Ruleta!';}
   showScreen('over');
 }
 
@@ -941,6 +1480,30 @@ function render(){
     ctx.fillStyle='rgba(0,0,0,.3)';ctx.beginPath();ctx.ellipse(p.x,p.y+11,10,4,0,0,TAU);ctx.fill();
     ctx.fillStyle='#ff4d6d';circ(p.x,p.y+b,11);ctx.fill();
     ctx.strokeStyle='#fff';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(p.x-5,p.y+b);ctx.lineTo(p.x+5,p.y+b);ctx.moveTo(p.x,p.y+b-5);ctx.lineTo(p.x,p.y+b+5);ctx.stroke();
+  }
+  // cofres del tesoro destructibles
+  if(G.chests)for(const ch of G.chests){
+    if(ch.x+ch.r<vx0||ch.x-ch.r>vx1||ch.y+ch.r<vy0||ch.y-ch.r>vy1)continue;
+    ctx.fillStyle='rgba(0,0,0,.3)';ctx.beginPath();ctx.ellipse(ch.x,ch.y+11,ch.r*1.15,ch.r*.55,0,0,TAU);ctx.fill();
+    ctx.fillStyle='#855214';rr(ch.x-ch.r,ch.y-ch.r*.7,ch.r*2,ch.r*1.4,5);ctx.fill();
+    ctx.fillStyle='#ffcf4a';rr(ch.x-ch.r+2,ch.y-ch.r*.7+2,ch.r*2-4,ch.r*1.4-4,4);ctx.fill();
+    ctx.fillStyle='#4a2b00';ctx.fillRect(ch.x-3,ch.y-ch.r*.7+2,6,ch.r*1.4-4);
+    ctx.fillStyle='#fff';circ(ch.x,ch.y+1,2.8);ctx.fill();
+    const f=clamp(ch.hp/ch.maxHp,0,1);
+    ctx.fillStyle='rgba(0,0,0,.6)';rr(ch.x-16,ch.y-ch.r-8,32,6,3);ctx.fill();
+    ctx.fillStyle='#ffcf4a';rr(ch.x-15,ch.y-ch.r-7,30*f,4,2);ctx.fill();
+  }
+  // powerups mágicos en el campo
+  if(G.powUps)for(const pu of G.powUps){
+    if(pu.x+pu.r<vx0||pu.x-pu.r>vx1||pu.y+pu.r<vy0||pu.y-pu.r>vy1)continue;
+    pu.t+=G.rdt||0.016;const b=Math.sin(pu.t*4)*3,pulse=1+Math.sin(pu.t*5)*.14;
+    ctx.save();
+    ctx.globalAlpha=.35;ctx.fillStyle=pu.color;circ(pu.x,pu.y+b,pu.r*pulse*1.35);ctx.fill();
+    ctx.globalAlpha=.9;ctx.fillStyle='rgba(22,14,48,.85)';circ(pu.x,pu.y+b,pu.r);ctx.fill();
+    ctx.strokeStyle=pu.color;ctx.lineWidth=2.5;ctx.stroke();
+    ctx.font='13px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillStyle='#fff';ctx.fillText(pu.ico,pu.x,pu.y+b+1);
+    ctx.restore();
   }
   // obstáculos
   for(const o of G.obs){
@@ -1247,6 +1810,14 @@ function drawW(w){
   if(w.burnT>0){ctx.fillStyle='rgba(255,140,40,.35)';circ(0,0,w.r*1.5);ctx.fill();}
   if(w.slowT>0){ctx.strokeStyle='#8fe8ff';ctx.lineWidth=3;circ(0,0,w.r*1.35);ctx.stroke();}
   if(w.isPlayer){ctx.strokeStyle='rgba(255,255,255,'+(.55+.25*Math.sin(G.t*6))+')';ctx.lineWidth=3;circ(0,0,w.r+7);ctx.stroke();}
+  if(w.shield>0){
+    ctx.strokeStyle='rgba(79,216,255,'+(.6+.3*Math.sin(G.t*8))+')';ctx.lineWidth=3.5;
+    circ(0,0,w.r+10);ctx.stroke();
+    ctx.fillStyle='rgba(79,216,255,.14)';circ(0,0,w.r+10);ctx.fill();
+  }
+  if(w.frenzyT>0){
+    ctx.strokeStyle='rgba(255,122,47,'+(.6+.4*Math.sin(G.t*12))+')';ctx.lineWidth=2.5;circ(0,0,w.r+14);ctx.stroke();
+  }
   if(w.dashT>0){
     ctx.strokeStyle='rgba(255,255,255,.55)';ctx.lineWidth=3;ctx.lineCap='round';
     const dx=-w.dashDX,dy=-w.dashDY;
@@ -1254,17 +1825,18 @@ function drawW(w){
   }
   if(w.inv>0)ctx.globalAlpha=.5;
   const ks=w.r/18;ctx.scale(ks,ks);
-  drawChar(ctx,{sp:w.sp,v:w.v,color:w.color,dark:w.dark,aim:w.aim,el:w.el,wp:w.wp,mv:clamp(spd/190,0,1),t:G.t,rec:w.rec,r:w.r});
+  drawChar(ctx,{sp:w.sp,v:w.v,color:w.color,dark:mix(heroDark(w.color)),aim:w.aim,el:w.el,wp:w.wp,mv:clamp(spd/190,0,1),t:G.t,rec:w.rec,r:w.r});
   if(G.t-w.lastHit<.1){ctx.fillStyle='rgba(255,255,255,.5)';circ(0,0,w.r*.95);ctx.fill();}
   ctx.globalAlpha=1;
   ctx.restore();
   const by=w.y-w.r-16;
-  label(w.name,w.x,by-10,12,w.isPlayer?'#ffe27a':'#fff');
+  label((w.isPlayer&&save.vip?'👑 ':'')+w.name,w.x,by-10,12,w.isPlayer?(save.vip?'#ffd24a':'#ffe27a'):'#fff');
   const bw=46,f=clamp(w.hp/w.maxHp,0,1);
   ctx.fillStyle='rgba(0,0,0,.6)';rr(w.x-bw/2-1,by-2,bw+2,9,4);ctx.fill();
   ctx.fillStyle=f>.5?'#6fe08a':f>.25?'#ffcf4a':'#ff5b6e';rr(w.x-bw/2,by-1,bw*f,7,3);ctx.fill();
   label(String(w.level),w.x-bw/2-9,by+2,11,'#cfe9ff');
 }
+function heroDark(c){return mix(c,-.4)}
 function pill(txt,x,y,color,pop){
   ctx.font='800 '+(15*U)+'px Nunito,system-ui,sans-serif';
   const w=ctx.measureText(txt).width+22*U,h=26*U;
@@ -1287,14 +1859,21 @@ function drawHud(){
   if(P.kills>G.lastKills){G.lastKills=P.kills;G.killPop=.45;}
   G.killPop=Math.max(0,(G.killPop||0)-rd);
   let x=safe.l+12;const y=safe.t+14*U,ph=26*U;
-  x+=pill('👥 '+alive,x,y)+6;x+=pill('⚔️ '+P.kills,x,y,'#fff',G.killPop/.45)+6;pill('⭐ Nv '+P.level,x,y);
+  x+=pill('👥 '+alive,x,y)+6;
+  x+=pill('⚔️ '+P.kills,x,y,'#fff',G.killPop/.45)+6;
+  x+=pill('🪙 +'+(P.matchCoins||0),x,y,'#ffd24a')+6;
+  pill('⭐ Nv '+P.level,x,y);
   // zona
   let zt,zc='#fff';
   if(z.state==='wait'){zt='⏳ Zona cierra en '+Math.max(0,Math.ceil(WAIT[z.phase]-z.t))+' s';}
   else if(z.state==='shrink'){zt='⚠️ ¡La zona se cierra!';zc='#ff8a9a';}
   else{zt='🔥 Zona final';zc='#ff8a9a';}
   pill(zt,safe.l+12,y+ph+6,zc);
-  if(P.alive&&P.comboEl>=0&&G.t-P.comboT<3)pill('🔀 Cambia de elemento para mezclar · '+EICO[P.comboEl]+'+?',safe.l+12,y+2*(ph+6),'#ffe27a');
+  if(P.alive&&P.combo>1&&G.t-(P.comboLast||0)<2.8){
+    pill('🔥 COMBO x'+P.combo+' (+'+Math.min(60,(P.combo-1)*10)+'% Daño)',safe.l+12,y+2*(ph+6),'#ffd24a');
+  }else if(P.alive&&P.comboEl>=0&&G.t-P.comboT<3){
+    pill('🔀 Cambia de elemento para mezclar · '+EICO[P.comboEl]+'+?',safe.l+12,y+2*(ph+6),'#ffe27a');
+  }
   if(G.comboFx>0){G.comboFx=Math.max(0,G.comboFx-(G.rdt||.016));ctx.save();ctx.globalAlpha=clamp(G.comboFx,0,1);label('MEZCLA: '+G.comboName,W/2,H*.3,Math.min(24*U,W/16),G.comboCol);ctx.restore();}
   // feed
   let fy=y+ph*2+22*U;
@@ -1368,11 +1947,28 @@ function drawHud(){
 
 /* ---------- pantallas ---------- */
 function showScreen(n){
-  for(const id of['menu','heroes','over'])$('#'+id).hidden=(id!==n);
-  if(n==='menu'){mode='menu';refreshMenu();}
+  for(const id of['menu','heroes','talents','quests','over','realShop','creatorPanel']){
+    const el=$('#'+id);if(el)el.hidden=(id!==n);
+  }
+  if(n==='menu'){
+    mode='menu';refreshMenu();
+    recordAdImpression('banner');
+  }
+  if(n==='over'){
+    recordAdImpression('banner');
+  }
+  if(n==='realShop'){
+    refreshShopUI();
+  }
+  if(n==='creatorPanel'){
+    renderCreatorPanel();
+  }
 }
 function refreshMenu(){
-  $('#coins').textContent=save.coins;$('#coins2').textContent=save.coins;
+  $('#coins').textContent=save.coins;
+  $('#coins2').textContent=save.coins;
+  if($('#coinsTalents'))$('#coinsTalents').textContent=save.coins;
+  if($('#coinsQuests'))$('#coinsQuests').textContent=save.coins;
   $('#best').textContent=save.best?'#'+save.best:'-';$('#wins').textContent=save.wins;
   $('#sndBtn').textContent='Sonido: '+(save.sound?'sí':'no');
   $('#autoBtn').textContent='Disparo auto: '+(save.auto?'sí':'no');
@@ -1383,8 +1979,316 @@ function refreshMenu(){
   $('#diffBtn').textContent='Dificultad: '+dd.name;$('#diffBtn').style.color=dd.color;
   $('#streak').textContent=save.streak||0;
   $('#nameIn').value=save.name||'';
+
+  // Mina pasiva
+  const ms=getMineStats(),mp=getMinePending();
+  if($('#mineLvlBadge'))$('#mineLvlBadge').textContent='Nv. '+ms.lvl+(save.vip?' ⭐ VIP (x2)':'');
+  if($('#mineRateText'))$('#mineRateText').textContent='+'+ms.rate+' 🪙 / min · Máx: '+ms.cap+' 🪙'+(save.vip?' · ¡Bono VIP Activo!':'');
+  if($('#mineStashText'))$('#mineStashText').textContent='🪙 '+mp;
+  if($('#realShopBtn')){
+    if(save.vip){
+      $('#realShopBtn').innerHTML='👑 Pase VIP Activo';
+    }else{
+      $('#realShopBtn').innerHTML='💎 Tienda VIP';
+    }
+  }
+  const cd=getWheelCooldown();
+  if($('#wheelBtn')){
+    $('#wheelBtn').textContent=cd.isAvailable?'🎡 Ruleta (¡Gratis!)':'🎡 Ruleta';
+    $('#wheelBtn').style.color=cd.isAvailable?'#ffcf4a':'#ff7a2f';
+  }
   syncPlay();
 }
+
+function renderTalents(){
+  const g=$('#talentsGrid');if(!g)return;
+  g.innerHTML='';
+  TALENTS.forEach(t=>{
+    const lvl=save.talents[t.id]||0,max=t.max,isMax=lvl>=max;
+    const cost=isMax?0:t.cost(lvl);
+    const can=save.coins>=cost&&!isMax;
+    const d=document.createElement('div');
+    d.className='card-panel'+(can?' highlight':'');
+    d.innerHTML=
+      '<div class="card-header">'+
+        '<h4 class="card-title">'+t.ico+' '+t.name+'</h4>'+
+        '<span class="badge '+(isMax?'gold':'')+'">'+(isMax?'MÁXIMO':'Nv. '+lvl+' / '+max)+'</span>'+
+      '</div>'+
+      '<p style="margin:0;font-size:13px;color:var(--mute)">'+t.desc+'</p>'+
+      '<div style="font-size:13px;font-weight:800;color:var(--gold)">Bono actual: '+(lvl===0?'Ninguno':t.fn(lvl))+'</div>'+
+      '<div class="prog-bar"><div class="prog-fill" style="width:'+Math.round((lvl/max)*100)+'%"></div></div>'+
+      '<div class="btn-row">'+
+        '<span style="font-size:14px;font-weight:800">'+(isMax?'Completado':'Costo: 🪙 <b>'+cost+'</b>')+'</span>'+
+        '<button class="btn sm '+(isMax?'':can?'gold ok':'')+'" type="button" '+(isMax||!can?'disabled style="opacity:.5;cursor:not-allowed"':'')+'>'+
+          (isMax?'Máximo':'Mejorar')+
+        '</button>'+
+      '</div>';
+    if(!isMax&&can){
+      d.querySelector('button').addEventListener('click',()=>{
+        if(save.coins<cost)return;
+        save.coins-=cost;
+        save.talents[t.id]=lvl+1;
+        persist();
+        sfx('level');
+        toast('¡'+t.name+' mejorado a Nivel '+(lvl+1)+'! ⚡');
+        refreshMenu();
+        renderTalents();
+      });
+    }
+    g.appendChild(d);
+  });
+}
+
+function renderQuests(){
+  const list=$('#questsList');if(!list)return;
+  list.innerHTML='';
+  save.quests.forEach(q=>{
+    const d=document.createElement('div');
+    d.className='card-panel'+(q.done&&!q.claimed?' highlight':'');
+    const pct=Math.round((q.prog/q.target)*100);
+    d.innerHTML=
+      '<div class="card-header">'+
+        '<h4 class="card-title">📜 '+q.name+'</h4>'+
+        '<span class="badge '+(q.claimed?'green':q.done?'gold':'')+'">'+(q.claimed?'Reclamada':q.done?'¡Completada!':q.prog+' / '+q.target)+'</span>'+
+      '</div>'+
+      '<p style="margin:0;font-size:13px;color:var(--mute)">'+q.desc+'</p>'+
+      '<div class="prog-bar"><div class="prog-fill" style="width:'+Math.min(100,pct)+'%"></div></div>'+
+      '<div class="btn-row">'+
+        '<span style="font-size:14px;font-weight:800;color:var(--gold)">Recompensa: 🪙 <b>+'+q.reward+'</b></span>'+
+        '<button class="btn sm '+(q.done&&!q.claimed?'gold ok':'')+'" type="button" '+(q.claimed||!q.done?'disabled style="opacity:.5;cursor:not-allowed"':'')+'>'+
+          (q.claimed?'Reclamado':q.done?'¡Reclamar!':'En progreso')+
+        '</button>'+
+      '</div>';
+    if(q.done&&!q.claimed){
+      d.querySelector('button').addEventListener('click',()=>{
+        save.coins+=q.reward;
+        q.claimed=true;
+        persist();
+        sfx('win');
+        toast('¡Reclamaste +'+q.reward+' 🪙 de la misión!');
+        refreshMenu();
+        renderQuests();
+      });
+    }
+    list.appendChild(d);
+  });
+}
+
+/* ---------- Ruleta de la Fortuna ---------- */
+let wheelMode='lobby',wheelSpinning=false,wheelAngle=0;
+const WHEEL_SLICES=[
+  {label:'x2 Monedas',mult:2,coins:0,color:'#9b5de5'},
+  {label:'+100 🪙',mult:1,coins:100,color:'#f15bb5'},
+  {label:'x1.5 Monedas',mult:1.5,coins:0,color:'#00bbf9'},
+  {label:'+250 🪙',mult:1,coins:250,color:'#00f5d4'},
+  {label:'x3 Monedas',mult:3,coins:0,color:'#fee440'},
+  {label:'+180 🪙',mult:1,coins:180,color:'#ff5b6e'}
+];
+
+function drawWheelCanvas(){
+  const c=$('#wheelCanvas');if(!c)return;
+  const ctx=c.getContext('2d'),w=c.width,h=c.height,r=w/2;
+  ctx.clearRect(0,0,w,h);
+  const n=WHEEL_SLICES.length,arc=TAU/n;
+  ctx.save();
+  ctx.translate(r,r);
+  ctx.rotate(wheelAngle);
+  for(let i=0;i<n;i++){
+    const s=WHEEL_SLICES[i];
+    ctx.beginPath();
+    ctx.moveTo(0,0);
+    ctx.arc(0,0,r,i*arc,(i+1)*arc);
+    ctx.closePath();
+    ctx.fillStyle=s.color;
+    ctx.fill();
+    ctx.strokeStyle='#fff';
+    ctx.lineWidth=2;
+    ctx.stroke();
+
+    ctx.save();
+    ctx.rotate((i+.5)*arc);
+    ctx.textAlign='right';
+    ctx.textBaseline='middle';
+    ctx.fillStyle='#150f2e';
+    ctx.font='800 13px Nunito,sans-serif';
+    ctx.fillText(s.label,r-16,0);
+    ctx.restore();
+  }
+  ctx.beginPath();ctx.arc(0,0,24,0,TAU);ctx.fillStyle='#1b1338';ctx.fill();
+  ctx.strokeStyle='#ffd24a';ctx.lineWidth=4;ctx.stroke();
+  ctx.restore();
+}
+
+function getWheelCooldown(){
+  const now=Date.now();
+  const ONE_DAY=24*60*60*1000;
+  const elapsed=now-(save.wheelLastFree||0);
+  const isAvailable=elapsed>=ONE_DAY;
+  const msLeft=Math.max(0,ONE_DAY-elapsed);
+  return {isAvailable,msLeft};
+}
+
+let wheelCdInterval=null;
+function updateWheelUI(){
+  const spinBtn=$('#spinWheelBtn');
+  const paidBtn=$('#spinPaidBtn');
+  const adBtn=$('#spinAdBtn');
+  const cdInfo=$('#whCooldownInfo');
+  if(!spinBtn||!paidBtn||!adBtn||!cdInfo)return;
+
+  if(wheelMode==='bonus'){
+    $('#whTitle').textContent='🎡 Multiplicador de Batalla';
+    $('#whSub').textContent='¡Gira para multiplicar las '+(lastResult?lastResult.baseCoins:0)+' 🪙 de tu partida!';
+    cdInfo.textContent='';
+    spinBtn.textContent='¡GIRAR MULTIPLICADOR!';
+    spinBtn.style.display='block';
+    spinBtn.disabled=wheelSpinning;
+    spinBtn.style.opacity=wheelSpinning?'0.5':'1';
+    paidBtn.style.display='none';
+    adBtn.style.display='none';
+    return;
+  }
+
+  // Modo lobby (1 giro gratis al día o pagar 100 monedas)
+  const cd=getWheelCooldown();
+  $('#whTitle').textContent='🎡 Ruleta Diaria Arcana';
+  if(cd.isAvailable){
+    $('#whSub').textContent='¡Tienes 1 Giro Gratis hoy! Gira la rueda para ganar monedas y botín.';
+    cdInfo.innerHTML='<span class="badge green">🎁 1 GIRO GRATIS DIARIO DISPONIBLE</span>';
+    spinBtn.textContent='¡GIRAR GRATIS (1 al día)!';
+    spinBtn.style.display='block';
+    spinBtn.disabled=wheelSpinning;
+    spinBtn.style.opacity=wheelSpinning?'0.5':'1';
+    paidBtn.style.display='none';
+    adBtn.style.display='none';
+  }else{
+    const hrs=Math.floor(cd.msLeft/3600000);
+    const mins=Math.floor((cd.msLeft%3600000)/60000);
+    const secs=Math.floor((cd.msLeft%60000)/1000);
+    $('#whSub').textContent='Ya usaste tu giro diario. Puedes esperar o usar 100 monedas para un giro extra.';
+    cdInfo.innerHTML='⏳ Próximo giro gratis en: <b>'+hrs+'h '+mins+'m '+secs+'s</b>';
+    spinBtn.style.display='none';
+
+    paidBtn.style.display='block';
+    paidBtn.textContent='🪙 Girar por 100 Monedas (Tienes '+save.coins+')';
+    paidBtn.disabled=wheelSpinning||(save.coins<100);
+    paidBtn.style.opacity=(wheelSpinning||save.coins<100)?'0.5':'1';
+
+    adBtn.style.display='block';
+    adBtn.disabled=wheelSpinning;
+    adBtn.style.opacity=wheelSpinning?'0.5':'1';
+  }
+}
+
+function openWheel(m){
+  wheelMode=m||'lobby';
+  wheelSpinning=false;
+  $('#whResult').textContent='';
+  $('#wheelModal').hidden=false;
+  drawWheelCanvas();
+  updateWheelUI();
+  clearInterval(wheelCdInterval);
+  wheelCdInterval=setInterval(()=>{
+    if(!$('#wheelModal').hidden&&!wheelSpinning){
+      updateWheelUI();
+    }
+  },1000);
+}
+
+function closeWheel(){
+  clearInterval(wheelCdInterval);
+  $('#wheelModal').hidden=true;
+  refreshMenu();
+}
+
+function spinWheel(spinType){
+  if(wheelSpinning)return;
+
+  // Verificación de costo y límite diario
+  if(wheelMode==='lobby'){
+    const cd=getWheelCooldown();
+    if(spinType==='paid'){
+      if(save.coins<100){
+        toast('Necesitas al menos 100 monedas para un giro extra');
+        buzz(30);return;
+      }
+      save.coins-=100;
+      persist();
+      refreshMenu();
+    }else if(cd.isAvailable){
+      // Consumir el giro gratis diario
+      save.wheelLastFree=Date.now();
+      persist();
+    }else{
+      toast('Giro gratis ya utilizado hoy. Puedes pagar 100 monedas o ver un anuncio.');
+      buzz(30);return;
+    }
+  }
+
+  wheelSpinning=true;
+  updateWheelUI();
+  $('#whResult').textContent='¡Girando la rueda mágica...!';
+  sfx('pick');
+
+  const extraSpins=4+Math.random()*3;
+  const targetSlice=Math.floor(Math.random()*WHEEL_SLICES.length);
+  const n=WHEEL_SLICES.length;
+  const targetAngle=extraSpins*TAU+(n-targetSlice-0.5)*(TAU/n)-Math.PI/2;
+  const startAngle=wheelAngle%TAU;
+  const diff=targetAngle-startAngle;
+  const duration=3000;
+  const startTime=performance.now();
+
+  function animWheel(now){
+    const elapsed=now-startTime;
+    const progress=Math.min(1,elapsed/duration);
+    const ease=1-Math.pow(1-progress,3);
+    wheelAngle=startAngle+diff*ease;
+    drawWheelCanvas();
+    if(progress<1){
+      requestAnimationFrame(animWheel);
+    }else{
+      wheelSpinning=false;
+      const prize=WHEEL_SLICES[targetSlice];
+      sfx('win');
+      buzz(50);
+      let prizeText='';
+      if(wheelMode==='bonus'&&lastResult){
+        if(!lastResult.multiplied){
+          lastResult.multiplied=true;
+          let extra=0;
+          if(prize.mult>1){
+            extra=Math.round(lastResult.baseCoins*(prize.mult-1));
+          }else{
+            extra=prize.coins;
+          }
+          save.coins+=extra;
+          lastResult.coins+=extra;
+          persist();
+          prizeText='¡Premio: '+prize.label+'! Ganaste +'+extra+' 🪙 extra.';
+          $('#ovStats').innerHTML=
+            '<span class="pill">⚔️ Eliminaciones <b>'+lastResult.kills+'</b></span>'+
+            '<span class="pill">💎 Botín de Arena <b>🪙 +'+(lastResult.matchLoot||0)+'</b></span>'+
+            '<span class="pill">🪙 Total con Ruleta <b>+'+lastResult.coins+'</b></span>';
+          $('#doubleCoinsBtn').hidden=true;
+        }else{
+          prizeText='¡Premio: '+prize.label+'!';
+        }
+      }else{
+        const winCoins=prize.coins>0?prize.coins:150;
+        save.coins+=winCoins;
+        persist();
+        prizeText='¡Ganaste '+winCoins+' 🪙 de la ruleta!';
+      }
+      $('#whResult').textContent=prizeText;
+      toast(prizeText);
+      refreshMenu();
+      updateWheelUI();
+    }
+  }
+  requestAnimationFrame(animWheel);
+}
+
 function renderHeroes(){
   const g=$('#heroGrid');g.innerHTML='';
   HEROES.forEach((h,i)=>{
@@ -1483,6 +2387,317 @@ $('#again').addEventListener('click',()=>{if(!save.name||!save.name.trim()){show
 $('#toMenu').addEventListener('click',()=>showScreen('menu'));
 $('#heroBtn').addEventListener('click',()=>{renderHeroes();$('#coins2').textContent=save.coins;showScreen('heroes');});
 $('#heroBack').addEventListener('click',()=>showScreen('menu'));
+
+$('#mineClaimBtn').addEventListener('click',claimMine);
+$('#talentsBtn').addEventListener('click',()=>{renderTalents();showScreen('talents');});
+$('#talentsBack').addEventListener('click',()=>showScreen('menu'));
+$('#questsBtn').addEventListener('click',()=>{renderQuests();showScreen('quests');});
+$('#questsBack').addEventListener('click',()=>showScreen('menu'));
+$('#wheelBtn').addEventListener('click',()=>openWheel('lobby'));
+$('#doubleCoinsBtn').addEventListener('click',()=>openWheel('bonus'));
+$('#spinWheelBtn').addEventListener('click',()=>spinWheel('free'));
+$('#spinPaidBtn').addEventListener('click',()=>spinWheel('paid'));
+$('#spinAdBtn').addEventListener('click',()=>{
+  closeWheel();
+  startRewardedAd('wheel');
+});
+$('#wheelCloseBtn').addEventListener('click',closeWheel);
+
+/* ========================================================
+   SISTEMA DE MONETIZACIÓN REAL (INGRESOS ACTIVOS Y PASIVOS)
+   ======================================================== */
+let monData={
+  config:{
+    paypalEmail:'',paypalMeLink:'',stripePaymentLink:'',kofiLink:'',
+    adsensePublisherId:'',sandboxMode:true,currency:'USD',usdToCopRate:4100,
+    customSponsorText:'¡Descubre las novedades de Arcano Royale!'
+  },
+  metrics:{
+    totalRevenueUSD:0,activeRevenueUSD:0,passiveRevenueUSD:0,
+    purchasesCount:0,adImpressions:0,rewardedAdViews:0,transactions:[]
+  }
+};
+
+async function fetchMonetizationData(){
+  try{
+    const res=await fetch('/api/monetization');
+    if(res.ok){
+      monData=await res.json();
+      refreshShopUI();
+    }
+  }catch(e){}
+}
+fetchMonetizationData();
+
+async function recordAdImpression(type){
+  try{
+    const res=await fetch('/api/monetization/record-ad',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({type:type||'banner'})
+    });
+    if(res.ok){
+      const data=await res.json();
+      if(data.metrics)monData.metrics=data.metrics;
+    }
+  }catch(e){}
+}
+
+function refreshShopUI(){
+  const lbl=$('#shopModeLabel');
+  if(!lbl)return;
+  if(!monData.config||monData.config.sandboxMode){
+    lbl.textContent='Modo Pruebas / Sandbox (Entrega inmediata para verificar funcionamiento)';
+    lbl.style.color='#ffd24a';
+  }else if(monData.config.stripePaymentLink){
+    lbl.textContent='Modo Producción Real (Stripe Checkout Activo · Depósitos directos a tu banco)';
+    lbl.style.color='#6fe08a';
+  }else if(monData.config.paypalMeLink){
+    lbl.textContent='Modo Producción Real (PayPal Activo · Retirable a cuenta bancaria o Nequi)';
+    lbl.style.color='#6fe08a';
+  }else{
+    lbl.textContent='Modo Sandbox (Configura tus pasarelas de cobro en el Panel del Creador)';
+    lbl.style.color='#ffcf4a';
+  }
+}
+
+async function processRealPurchase(pid,name,price){
+  const cfg=monData.config||{};
+  // Si está en producción con enlace de Stripe o PayPal configurado, podemos abrir la pasarela
+  if(!cfg.sandboxMode&&cfg.stripePaymentLink){
+    try{window.open(cfg.stripePaymentLink,'_blank');}catch(e){}
+  }else if(!cfg.sandboxMode&&cfg.paypalMeLink){
+    try{window.open(cfg.paypalMeLink,'_blank');}catch(e){}
+  }
+
+  // Notificar al servidor para registrar la venta y remuneración real
+  try{
+    const res=await fetch('/api/monetization/purchase',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        productId:pid,
+        productName:name,
+        amountUSD:price,
+        customerName:save.name||'Mago Valiente',
+        paymentMethod:cfg.sandboxMode?'Sandbox (Prueba)':'Stripe / PayPal'
+      })
+    });
+    if(res.ok){
+      const data=await res.json();
+      if(data.metrics)monData.metrics=data.metrics;
+    }
+  }catch(e){}
+
+  // Entrega inmediata de recompensas dentro del juego
+  if(pid==='vip_pass'){
+    save.vip=true;
+    if(!save.owned.includes(4))save.owned.push(4);
+    if(!save.owned.includes(5))save.owned.push(5);
+    save.coins+=1500;
+    toast('👑 ¡Pase Arcano VIP activado! +x2 Mina Pasiva y héroes Solaria y Zephyr.');
+  }else if(pid==='coins_bag'){
+    save.coins+=2500;
+    save.wheelLastFree=0;
+    toast('🪙 ¡+2,500 Monedas Arcanas acreditadas!');
+  }else if(pid==='founder_chest'){
+    save.vip=true;save.vipFounder=true;
+    save.owned=[0,1,2,3,4,5];
+    save.coins+=15000;
+    toast('👑 ¡Cofre Fundador Supremo activado! Todos los héroes y 15,000 monedas.');
+  }else if(pid==='dev_coffee'){
+    save.coins+=500;
+    toast('❤️ ¡Muchas gracias por tu apoyo! +500 Monedas de regalo.');
+  }
+  persist();
+  sfx('win');
+  refreshMenu();
+}
+
+// Vinculación de botones de compra en la Tienda VIP
+document.querySelectorAll('.buy-btn').forEach(btn=>{
+  btn.addEventListener('click',e=>{
+    const b=e.currentTarget;
+    const pid=b.dataset.pid,name=b.dataset.name,price=Number(b.dataset.price)||1.99;
+    processRealPurchase(pid,name,price);
+  });
+});
+
+$('#realShopBtn').addEventListener('click',()=>{showScreen('realShop');});
+$('#realShopBack').addEventListener('click',()=>showScreen('menu'));
+$('#goToCreatorPanelBtn').addEventListener('click',()=>{showScreen('creatorPanel');});
+$('#creatorPanelBtn').addEventListener('click',()=>{showScreen('creatorPanel');});
+$('#creatorPanelBack').addEventListener('click',()=>showScreen('menu'));
+
+// Pestañas del Panel del Creador
+function setCreatorTab(tab){
+  $('#tabMetricsBtn').classList.toggle('active',tab==='metrics');
+  $('#tabGatewaysBtn').classList.toggle('active',tab==='gateways');
+  $('#tabGuideBtn').classList.toggle('active',tab==='guide');
+  $('#tabMetricsContent').style.display=tab==='metrics'?'block':'none';
+  $('#tabGatewaysContent').style.display=tab==='gateways'?'block':'none';
+  $('#tabGuideContent').style.display=tab==='guide'?'block':'none';
+}
+$('#tabMetricsBtn').addEventListener('click',()=>setCreatorTab('metrics'));
+$('#tabGatewaysBtn').addEventListener('click',()=>setCreatorTab('gateways'));
+$('#tabGuideBtn').addEventListener('click',()=>setCreatorTab('guide'));
+
+function renderCreatorPanel(){
+  fetchMonetizationData().then(()=>{
+    const m=monData.metrics||{};
+    const c=monData.config||{};
+    const tot=m.totalRevenueUSD||0;
+    const rate=Number(c.usdToCopRate)||4100;
+    const cop=Math.round(tot*rate);
+
+    $('#metricTotalUsd').textContent='$'+tot.toFixed(2)+' USD';
+    $('#metricTotalCop').textContent='Aprox. $'+cop.toLocaleString()+' COP';
+    $('#metricActiveUsd').textContent='$'+(m.activeRevenueUSD||0).toFixed(2)+' USD';
+    $('#metricPurchasesCount').textContent=(m.purchasesCount||0)+' compras directas';
+    $('#metricPassiveUsd').textContent='$'+(m.passiveRevenueUSD||0).toFixed(4)+' USD';
+    $('#metricAdsCount').textContent=(m.adImpressions||0)+' banners · '+(m.rewardedAdViews||0)+' videos';
+
+    // Rellenar campos de configuración
+    $('#cfgStripe').value=c.stripePaymentLink||'';
+    $('#cfgPaypal').value=c.paypalMeLink||c.paypalEmail||'';
+    $('#cfgKofi').value=c.kofiLink||'';
+    $('#cfgAdsense').value=c.adsensePublisherId||'';
+    $('#cfgRate').value=rate;
+    $('#cfgSandbox').checked=!!c.sandboxMode;
+
+    // Renderizar transacciones recientes
+    const txBox=$('#txList');
+    if(txBox){
+      if(!m.transactions||!m.transactions.length){
+        txBox.innerHTML='<div style="opacity:.6">Aún no hay transacciones registradas. Haz una compra de prueba en la Tienda VIP para verla aquí.</div>';
+      }else{
+        txBox.innerHTML=m.transactions.map(t=>`
+          <div style="background:rgba(0,0,0,.35);padding:8px 12px;border-radius:10px;display:flex;align-items:center;justify-content:space-between;gap:8px">
+            <div>
+              <b style="color:var(--gold)">${t.productName}</b> · <small style="color:#a099cc">${new Date(t.date).toLocaleTimeString()}</small>
+              <div style="font-size:11px;color:#d8d2f5">Cliente: ${t.customerName} · Método: <span style="color:#6fe08a">${t.paymentMethod}</span></div>
+            </div>
+            <div style="font-family:var(--display);color:#52c270;font-size:16px">+$${t.amountUSD.toFixed(2)} USD</div>
+          </div>
+        `).join('');
+      }
+    }
+  });
+}
+
+$('#saveConfigBtn').addEventListener('click',async()=>{
+  const cfg={
+    stripePaymentLink:$('#cfgStripe').value.trim(),
+    paypalMeLink:$('#cfgPaypal').value.trim(),
+    kofiLink:$('#cfgKofi').value.trim(),
+    adsensePublisherId:$('#cfgAdsense').value.trim(),
+    usdToCopRate:Number($('#cfgRate').value)||4100,
+    sandboxMode:$('#cfgSandbox').checked
+  };
+  try{
+    const res=await fetch('/api/monetization/config',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(cfg)
+    });
+    if(res.ok){
+      const data=await res.json();
+      monData.config=data.config;
+      toast('💾 ¡Configuración guardada en el servidor!');
+      renderCreatorPanel();
+    }
+  }catch(e){
+    toast('Error guardando configuración');
+  }
+});
+
+$('#testTxBtn').addEventListener('click',async()=>{
+  await processRealPurchase('vip_pass','Pase Arcano VIP (Simulado)',4.99);
+  renderCreatorPanel();
+});
+
+$('#resetMetricsBtn').addEventListener('click',async()=>{
+  try{
+    const res=await fetch('/api/monetization/reset-metrics',{method:'POST'});
+    if(res.ok){
+      const data=await res.json();
+      monData.metrics=data.metrics;
+      toast('Contadores reiniciados');
+      renderCreatorPanel();
+    }
+  }catch(e){}
+});
+
+/* ---------- Video Anuncio con Recompensa (Rewarded Ad) ---------- */
+let adTimerInterval=null,adSource='gameover';
+function startRewardedAd(src){
+  adSource=src||'gameover';
+  const modal=$('#rewardedAdModal');
+  modal.hidden=false;
+  const btn=$('#claimAdRewardBtn');
+  const timerBadge=$('#adTimerBadge');
+  const prog=$('#adProgFill');
+  const closeBtn=$('#closeAdBtn');
+
+  btn.disabled=true;
+  btn.style.opacity='.5';
+  btn.style.cursor='not-allowed';
+  btn.textContent='Reclamar Recompensa (Espera 10 s)';
+  closeBtn.style.display='none';
+  prog.style.width='0%';
+
+  let elapsed=0;
+  clearInterval(adTimerInterval);
+  adTimerInterval=setInterval(()=>{
+    elapsed++;
+    const left=Math.max(0,10-elapsed);
+    timerBadge.textContent='⏳ '+left+' s';
+    prog.style.width=(elapsed*10)+'%';
+
+    if(elapsed>=10){
+      clearInterval(adTimerInterval);
+      timerBadge.textContent='✅ ¡Listo!';
+      btn.disabled=false;
+      btn.style.opacity='1';
+      btn.style.cursor='pointer';
+      btn.textContent=adSource==='wheel'?'🎉 ¡Reclamar Giro Extra de Ruleta!':'🎉 ¡Reclamar +150 🪙 y Giro!';
+      closeBtn.style.display='inline-block';
+    }
+  },1000);
+}
+
+$('#watchAdRewardBtn').addEventListener('click',()=>startRewardedAd('gameover'));
+$('#claimAdRewardBtn').addEventListener('click',()=>{
+  clearInterval(adTimerInterval);
+  $('#rewardedAdModal').hidden=true;
+  save.coins+=150;
+  save.wheelLastFree=0;
+  recordAdImpression('rewarded');
+  persist();
+  refreshMenu();
+  sfx('win');
+  toast('🎉 ¡Recompensa acreditada! +150 🪙 y 1 Giro extra');
+  if(adSource==='wheel'){
+    openWheel('lobby');
+  }else{
+    openWheel('bonus');
+  }
+});
+$('#closeAdBtn').addEventListener('click',()=>{
+  clearInterval(adTimerInterval);
+  $('#rewardedAdModal').hidden=true;
+});
+
+// Enlace de patrocinio y publicidad pasiva
+$('#bannerActionBtn').addEventListener('click',()=>{
+  recordAdImpression('banner');
+  toast('¡Gracias por apoyar a nuestros patrocinadores mágicos!');
+});
+$('#overAdActionBtn').addEventListener('click',()=>{
+  recordAdImpression('banner');
+  showScreen('realShop');
+});
+
 $('#sndBtn').addEventListener('click',()=>{save.sound=!save.sound;persist();refreshMenu();initAudio();});
 $('#autoBtn').addEventListener('click',()=>{save.auto=!save.auto;persist();refreshMenu();});
 $('#lvlBtn').addEventListener('click',()=>{save.sel=(save.sel||1)>=save.lvl?1:(save.sel||1)+1;persist();refreshMenu();});
@@ -1514,7 +2729,7 @@ function quitMatch(){
 function handleBack(){
   if(!$('#confirm').hidden){closeConfirm();return;}
   if(mode==='play'){openConfirm();return;}
-  if(!$('#heroes').hidden||!$('#over').hidden){showScreen('menu');return;}
+  if(!$('#heroes').hidden||!$('#over').hidden||!$('#talents').hidden||!$('#quests').hidden||!$('#realShop').hidden||!$('#creatorPanel').hidden){showScreen('menu');return;}
   const now=Date.now();
   if(now-exitArmed<2000){const A=capApp();if(A&&A.exitApp)A.exitApp();return;}
   exitArmed=now;toast('Toca atrás otra vez para salir');

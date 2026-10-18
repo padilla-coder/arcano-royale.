@@ -1,0 +1,25 @@
+{
+  "config": {
+    "paypalEmail": "",
+    "paypalMeLink": "",
+    "stripePaymentLink": "",
+    "kofiLink": "",
+    "mercadopagoLink": "",
+    "adsensePublisherId": "",
+    "admobBannerId": "",
+    "customSponsorUrl": "https://ais-pre-wzzw5d5ftibpzkacvniwcg-638095220417.us-west2.run.app",
+    "customSponsorText": "¡Descubre las novedades de Arcano Royale!",
+    "sandboxMode": true,
+    "currency": "USD",
+    "usdToCopRate": 4100
+  },
+  "metrics": {
+    "totalRevenueUSD": 0,
+    "activeRevenueUSD": 0,
+    "passiveRevenueUSD": 0,
+    "purchasesCount": 0,
+    "adImpressions": 0,
+    "rewardedAdViews": 0,
+    "transactions": []
+  }
+}
